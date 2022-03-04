@@ -1,1 +1,1 @@
-mkdir build || del /s / q build\ && sass src:build --style compressed --source-map && npx tsc --project ./tsconfig.json && xcopy src\*.html /s build && xcopy src\icons /s build\icons\ && copy src\*.* build
+mkdir build || del /s / q build\ && npx sass src:build --style compressed --source-map && npx tsc --project ./tsconfig.json && xcopy src\*.html /s build && xcopy src\icons /s build\icons\ && copy src\*.* build

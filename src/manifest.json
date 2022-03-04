@@ -1,13 +1,14 @@
 {
     "manifest_version": 2,
     "name": "NoHistory",
-    "version": "1.0",
+    "version": "0.0.1",
     "description": "When you want to hide something, but don't want to open a private window.",
     "permissions": [
         "activeTab",
         "tabs",
         "history",
-        "storage"
+        "storage",
+        "unlimitedStorage"
     ],
     "background": {
         "scripts": [

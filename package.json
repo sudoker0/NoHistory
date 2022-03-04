@@ -2,13 +2,15 @@
   "name": "nohistory",
   "version": "0.0.1",
   "description": "When you want to hide something, but don't want to open a private window.",
-  "main": "background.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/QuanMCPC/NoHistory.git"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "cmd /c build.bat",
-    "watch": "cmd /c watch.bat"
+    "build": "cmd /c build.bat"
   },
-  "author": "",
+  "author": "QuanMCPC",
   "license": "MIT",
   "dependencies": {
     "@types/firefox-webext-browser": "^94.0.1"

@@ -1,0 +1,33 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "sass: watch",
+            "type": "shell",
+            "command": "sass --watch src --style compressed --source-map",
+            "group": "build",
+            "runOptions": {
+                "runOn": "folderOpen",
+            }
+        },
+        {
+            "label": "tsc: watch",
+            "type": "shell",
+            "command": "npx tsc --watch --project tsconfig.json --outDir ./src",
+            "group": "build",
+            "runOptions": {
+                "runOn": "folderOpen",
+            }
+        },
+        {
+            "label": "RUN THIS TASK AND ONLY THIS TASK TO BUILD THE REQUIRED FILES",
+            "dependsOn": ["sass: watch", "tsc: watch"],
+            "group": "build",
+            "runOptions": {
+                "runOn": "folderOpen",
+            },
+        }
+    ]
+}

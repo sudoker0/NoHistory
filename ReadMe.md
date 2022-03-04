@@ -1,21 +1,22 @@
-<center>
-    <h1>NoHistory</h1>
-    <h3>When you want to hide something, but don't want to open a private window.</h3>
-</center>
+# NoHistory
+***When you want to hide something, but don't want to open a private window.***
 
-(WARNING: This ReadMe contains quite a number of mistakes since I haven't got the time.)
+## What is this?
+**NoHistory** is an extension for Firefox created by me to prevent web pages from getting saved from history without opening a private window. It's *free*, *open-source*, and can help you in *certain situations* (See "What situation exactly?" for more info).
 
-### What is this?
-NoHistory, is an extension for Firefox user to prevent some webpages from getting saved from history, without opening a private window. It's free, open-source, and can help you in *certain* situation. It's also my very first extension and just a project I made when I was bored.
+## What situation exactly?
+ - When you need to access a webpage, but it forces you to log in to use it, it's something that you don't want your parent to know, and you don't feel like typing the login details.
 
-### How to build?
-Run `npm run build` in the root directory, and all the nessesary files will be generated into the `build` folder.
+ - And that's it
 
-Run `npm run watch` in the root directory, and the files will be build directly in the `src` directory and will be updated automatically for development purpose.
+## So, how to?
+ - **Build the project**: Run npm run build in the root directory, and it will generate the necessary file into the build folder.
 
-To install the required dependencies (which is just type definition), run `npm install` in the root directory.
+ - **Build the project for debugging purposes (will require VSCode)**: In the VSCode window, press the key combination: "Ctrl + Shift + B" and this should bring up a list of build options. Select the build option named: "RUN THIS TASK AND ONLY THIS TASK TO BUILD THE REQUIRED FILES" and it will generate the file into the src directory so that you can load the extension with both the generated one and the source file. Also for development purposes, the file will get updated when you save the source file.
 
-(Note that the `build` and `watch` command will only run in Windows. But you can create build script based on the batch script for other platforms.)
+ - **Install the required dependencies (which contain type definition)**: Run npm install in the root directory.
 
-### License
+> **Important Note**: To build and watch the file, you need to install NodeJS so that the computer can use the Node Package Manager to run the required tool like "sass" or "tsc".
+
+## License
 NoHistory is licensed under the [MIT license](LICENSE)
