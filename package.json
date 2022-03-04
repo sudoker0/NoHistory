@@ -1,0 +1,16 @@
+{
+  "name": "nohistory",
+  "version": "1.0.0",
+  "description": "When you want to hide something, but don't want to open a private window.",
+  "main": "background.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "cmd /c build.bat",
+    "watch": "cmd /c watch.bat"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@types/firefox-webext-browser": "^94.0.1"
+  }
+}

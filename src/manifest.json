@@ -1,0 +1,33 @@
+{
+    "manifest_version": 2,
+    "name": "NoHistory",
+    "version": "1.0",
+    "description": "When you want to hide something, but don't want to open a private window.",
+    "permissions": [
+        "activeTab",
+        "tabs",
+        "history",
+        "storage"
+    ],
+    "background": {
+        "scripts": [
+            "background/background.js"
+        ]
+    },
+    "icons": {
+        "32": "icons/nohistory-logo-32.png",
+        "64": "icons/nohistory-logo-64.png",
+        "128": "icons/nohistory-logo-128.png",
+        "256": "icons/nohistory-logo-256.png",
+        "512": "icons/nohistory-logo-512.png"
+    },
+    "browser_action": {
+        "default_icon": "icons/nohistory-logo-512.png",
+        "default_title": "NoHistory",
+        "default_popup": "popup/nohistory_page.html"
+    },
+    "options_ui": {
+        "page": "setting/index.html",
+        "open_in_tab": true
+    }
+}
