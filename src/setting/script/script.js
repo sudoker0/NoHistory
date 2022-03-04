@@ -54,6 +54,7 @@ function openFile() {
     });
 }
 window.addEventListener("load", async () => {
+    document.getElementById("versionNumber").innerHTML = browser.runtime.getManifest().version;
     const setting = await browser.storage.local.get("nohistory_setting");
     const config = setting === null || setting === void 0 ? void 0 : setting.nohistory_setting;
     function toggleStuff() {
@@ -109,6 +110,9 @@ document.querySelectorAll("button.setting_button").forEach(result => {
                 break;
             case "backup":
                 document.getElementById("setting_backup").classList.add("opened");
+                break;
+            case "help":
+                document.getElementById("setting_help").classList.add("opened");
                 break;
         }
     };

@@ -39,10 +39,12 @@ browser.runtime.onMessage.addListener(async (sentMessage, _0, _1) => {
             case "addTab":
                 tabIdList.push(tab.id);
                 resolve(null);
+                console.log(`Added tab ${tab.id}`);
                 break;
             case "removeTab":
                 tabIdList.splice(tabIdList.indexOf(tab.id), 1);
                 resolve(null);
+                console.log(`Removed tab ${tab.id}`);
                 break;
             case "isRemoveNotClicked":
                 console.log("yes");
@@ -67,6 +69,11 @@ browser.runtime.onMessage.addListener(async (sentMessage, _0, _1) => {
     })
 })
 
+browser.tabs.onRemoved.addListener((tabId) => {
+    tabIdList.splice(tabIdList.indexOf(tabId), 1);
+    console.log(`Removed tab ${tabId} (by closing)`);
+})
+
 browser.tabs.onUpdated.addListener((tabId, _0, tab) => {
     return new Promise(async (resolve, _) => {
         const result = await browser.storage.local.get("nohistory_urlList");
@@ -87,3 +94,34 @@ browser.tabs.onUpdated.addListener((tabId, _0, tab) => {
         }
     })
 });
+
+browser.tabs.onActivated.addListener(async (e) => {
+    const setting = await browser.storage.local.get("nohistory_setting");
+    if (!setting.nohistory_setting.statusBadge) return;
+    const cond_1 = tabIdList.some(id => id == e.tabId)
+    const tabs = await browser.tabs.query({currentWindow: true, active: true})
+    const result = await browser.storage.local.get("nohistory_urlList");
+    let urlList: string[] = result.nohistory_urlList || [];
+    const cond_2 = urlList.some(url => url == new URL(tabs[0].url).hostname)
+
+    var color: browser.browserAction.ColorValue = [0, 0, 0, 0];
+    var rating: string = "";
+
+    if (!cond_1 && !cond_2){
+        color = [255, 0, 0, 255];
+        rating = "00";
+    } else if (cond_1 && !cond_2) {
+        color = [255, 128, 0, 255];
+        rating = "01"
+    } else if (!cond_1 && cond_2) {
+        color = [255, 128, 0, 255];
+        rating = "10";
+    } else {
+        color = [0, 128, 0, 255];
+        rating = "11";
+    }
+
+    browser.browserAction.setBadgeText({ text: rating });
+    browser.browserAction.setBadgeBackgroundColor({ color: color });
+    browser.browserAction.setBadgeTextColor({ color: [255, 255, 255, 255] });
+})

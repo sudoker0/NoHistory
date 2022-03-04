@@ -1,6 +1,8 @@
 const default_setting = {
+    versionNumber: browser.runtime.getManifest().version,
     darkmode: false,
     animation: true,
+    statusBadge: true,
 }
 
 const addButton = document.getElementById("addthispage");
@@ -18,6 +20,41 @@ browser.tabs.query({currentWindow: true, active: true}).then((tabs) => {
     console.log(tab.url);
 }, console.error);
 
+function migrateObj(oldObj: Object, newObj: Object): Object {
+    oldObj = Object.keys(newObj).reduce((acc, key) => ({ ...acc, [key]: oldObj[key] == null || oldObj[key] == undefined ? newObj[key] : oldObj[key] }), {})
+    return oldObj;
+}
+
+function areArraysEqualSets (a1: string[], a2: string[]) {
+    const superSet = {};
+    for (const i of a1) {
+        const e = i + typeof i;
+        superSet[e] = 1;
+    }
+    for (const i of a2) {
+        const e = i + typeof i;
+        if (!superSet[e]) {
+            return false;
+        }
+        superSet[e] = 2;
+    }
+    for (let e in superSet) {
+        if (superSet[e] === 1) {
+            return false;
+        }
+    }
+    return true;
+}
+
+async function updateConf() {
+    const oldConf = (await browser.storage.local.get("nohistory_setting"))["nohistory_setting"];
+    const currentVersionNumber = browser.runtime.getManifest().version
+    if (oldConf?.versionNumber != currentVersionNumber || !(areArraysEqualSets(Object.keys(oldConf), Object.keys(default_setting)))) {
+        var migratedObj = migrateObj(oldConf, default_setting);
+        migratedObj["versionNumber"] = currentVersionNumber;
+        await browser.storage.local.set({nohistory_setting: migratedObj});
+    }
+}
 
 async function isURLExist() {
     const result = await browser.runtime.sendMessage("isRemoveNotClicked");
@@ -50,8 +87,10 @@ async function isTabExist() {
 }
 
 window.addEventListener('load', async () => {
+    document.getElementById("versionNumber").innerHTML = browser.runtime.getManifest().version;
     await isURLExist();
     await isTabExist();
+    await updateConf();
     const currentURL: string = await browser.runtime.sendMessage("getCurrentURL");
     const urlObj = new URL(currentURL);
 

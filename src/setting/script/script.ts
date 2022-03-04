@@ -56,10 +56,12 @@ function openFile(): Promise<string | ArrayBuffer | null> {
 }
 
 window.addEventListener("load", async () => {
+    document.getElementById("versionNumber").innerHTML = browser.runtime.getManifest().version;
     const setting = await browser.storage.local.get("nohistory_setting");
     const config: {
-        darkmode: boolean;
-        animation: boolean;
+        darkmode: boolean,
+        animation: boolean,
+        statusBadge: boolean
     } = setting?.nohistory_setting;
 
     function toggleStuff() {
@@ -117,13 +119,14 @@ document.querySelectorAll("button.setting_button").forEach(result => {
             case "backup":
                 document.getElementById("setting_backup").classList.add("opened");
                 break;
+            case "help":
+                document.getElementById("setting_help").classList.add("opened");
+                break;
         }
     }
 })
 
 document.getElementById("export_setting").onclick = async () => {
-
-
     var data1 = await browser.storage.local.get("nohistory_setting");
     var data2 = await browser.storage.local.get("nohistory_urlList");
     var data = {

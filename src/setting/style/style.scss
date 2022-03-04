@@ -120,26 +120,26 @@ div#setting_url {
             }
         }
     }
+}
 
-    table {
-        margin: 16px 0;
-        width: 100%;
-        border-collapse: separate;
-        column-gap: 32px;
-        td {
-            overflow-wrap: anywhere;
-            font-size: 1.2rem;
-            p {
-                margin: 0;
-            }
+table {
+    margin: 16px 0;
+    width: 100%;
+    border-collapse: separate;
+    column-gap: 32px;
+    td {
+        overflow-wrap: anywhere;
+        font-size: 1.2rem;
+        p {
+            margin: 0;
         }
-        thead th {
-            text-align: left;
-            font-weight: bold;
-            font-size: 1.5rem;
-            color: var(--text);
-            background-color: var(--background);
-        }
+    }
+    thead th {
+        text-align: left;
+        font-weight: bold;
+        font-size: 1.5rem;
+        color: var(--text);
+        background-color: var(--background);
     }
 }
 
@@ -250,5 +250,11 @@ button.with_text {
     &:hover {
         background: var(--url-color);
         color: var(--background);
+    }
+}
+
+@media (max-width: 800px) {
+    button.setting_button svg {
+        display: none;
     }
 }
