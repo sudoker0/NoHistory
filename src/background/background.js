@@ -24,7 +24,6 @@ browser.runtime.onMessage.addListener(async (sentMessage, _0, _1) => {
     return new Promise(async (resolve, reject) => {
         const tabs = await browser.tabs.query({ currentWindow: true, active: true });
         let tab = tabs[0];
-        console.log(sentMessage);
         switch (sentMessage) {
             case "addItem":
                 await manageLinkInNH(0, tab.url);
@@ -37,15 +36,12 @@ browser.runtime.onMessage.addListener(async (sentMessage, _0, _1) => {
             case "addTab":
                 tabIdList.push(tab.id);
                 resolve(null);
-                console.log(`Added tab ${tab.id}`);
                 break;
             case "removeTab":
                 tabIdList.splice(tabIdList.indexOf(tab.id), 1);
                 resolve(null);
-                console.log(`Removed tab ${tab.id}`);
                 break;
             case "isRemoveNotClicked":
-                console.log("yes");
                 const result = await browser.storage.local.get("nohistory_urlList");
                 let urlList = result.nohistory_urlList || [];
                 resolve(urlList.some(url => url == new URL(tab.url).hostname));
@@ -61,28 +57,23 @@ browser.runtime.onMessage.addListener(async (sentMessage, _0, _1) => {
                 break;
             default:
                 reject(false);
-                console.log("Unknown message: " + sentMessage);
                 break;
         }
     });
 });
 browser.tabs.onRemoved.addListener((tabId) => {
     tabIdList.splice(tabIdList.indexOf(tabId), 1);
-    console.log(`Removed tab ${tabId} (by closing)`);
 });
 browser.tabs.onUpdated.addListener((tabId, _0, tab) => {
     return new Promise(async (resolve, _) => {
         const result = await browser.storage.local.get("nohistory_urlList");
-        console.log(result);
         if ((result === null || result === void 0 ? void 0 : result.nohistory_urlList) == null) {
-            console.log("Created");
             await browser.storage.local.set({
                 "nohistory_urlList": [],
             });
         }
         let urlList = result.nohistory_urlList || [];
         if ((urlList.some(url => url == new URL(tab.url).hostname)) || (tabIdList.some(id => id == tabId))) {
-            console.log(`Deleted ${tabId}: ${tab.url}`);
             await browser.history.deleteUrl({ url: tab.url });
             resolve(true);
         }

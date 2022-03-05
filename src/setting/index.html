@@ -34,9 +34,13 @@
                 <svg xmlns="http://www.w3.org/2000/svg" height="36px" viewBox="0 0 24 24" width="36px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>
                 <h3>Help</h3>
             </button>
+            <button class="setting_button" data-tab="about">
+                <svg xmlns="http://www.w3.org/2000/svg" height="36px" viewBox="0 0 24 24" width="36px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                <h3>About</h3>
+            </button>
         </div>
         <div id="content">
-            <div class="setting_page opened" id="setting_general">
+            <div class="setting_page opened" data-correspondingTab="general">
                 <h3 class="group">Theme</h3>
                 <div class="option">
                     <p>Enable Dark Mode</p>
@@ -60,7 +64,7 @@
                     </label>
                 </div>
             </div>
-            <div class="setting_page" id="setting_url">
+            <div class="setting_page" data-correspondingTab="url">
                 <h3 class="group">Search or Add URL</h3>
                 <div id="manage_url_box">
                     <label id="url_box">
@@ -85,12 +89,12 @@
                     <tbody></tbody>
                 </table>
             </div>
-            <div class="setting_page" id="setting_backup">
+            <div class="setting_page" data-correspondingTab="backup">
                 <h3 class="group">Actions</h3>
                 <button id="import_setting" class="with_text">Import</button>
                 <button id="export_setting" class="with_text">Export</button>
             </div>
-            <div class="setting_page" id="setting_help">
+            <div class="setting_page" data-correspondingTab="help">
                 <h3 class="group">Status Number (Status Badge)</h3>
                 <p>The number that is displayed on the top-right of the extension icon is the status number, which is used to display the current protection status of the current URL/tab using a 2 bit number with different background color.</p>
                 <p>Here's a reference table to decode what does the number and the background color means:</p>
@@ -115,7 +119,7 @@
                         </tr>
                         <tr>
                             <td>10</td>
-                            <td>#FF8000 (Yellow)</td>
+                            <td>#FF8000 (Orange)</td>
                             <td>Only the current URL is in the NoHistory URL list.</td>
                         </tr>
                         <tr>
@@ -126,6 +130,9 @@
                     </tbody>
                 </table>
             </div>
+            <div class="setting_page" data-correspondingTab="about">
+                <h3 class="group">About</h3>
+                <p>Created by me, I guess.</p>
         </div>
     </body>
     <script src="./script/script.js"></script>

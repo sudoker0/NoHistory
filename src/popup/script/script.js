@@ -11,10 +11,6 @@ const addTab = document.getElementById("makethetabnohistory");
 const removeTab = document.getElementById("makethetabyeshistory");
 const tabStatus = document.getElementById("status_of_tab");
 const urlStatus = document.getElementById("status_of_url");
-browser.tabs.query({ currentWindow: true, active: true }).then((tabs) => {
-    let tab = tabs[0];
-    console.log(tab.url);
-}, console.error);
 function migrateObj(oldObj, newObj) {
     oldObj = Object.keys(newObj).reduce((acc, key) => (Object.assign(Object.assign({}, acc), { [key]: oldObj[key] == null || oldObj[key] == undefined ? newObj[key] : oldObj[key] })), {});
     return oldObj;
@@ -42,7 +38,7 @@ function areArraysEqualSets(a1, a2) {
 async function updateConf() {
     const oldConf = (await browser.storage.local.get("nohistory_setting"))["nohistory_setting"];
     const currentVersionNumber = browser.runtime.getManifest().version;
-    if ((oldConf === null || oldConf === void 0 ? void 0 : oldConf.versionNumber) != currentVersionNumber || !(areArraysEqualSets(Object.keys(oldConf), Object.keys(default_setting)))) {
+    if (oldConf != undefined && ((oldConf === null || oldConf === void 0 ? void 0 : oldConf.versionNumber) != currentVersionNumber || !areArraysEqualSets(Object.keys(oldConf), Object.keys(default_setting)))) {
         var migratedObj = migrateObj(oldConf, default_setting);
         migratedObj["versionNumber"] = currentVersionNumber;
         await browser.storage.local.set({ nohistory_setting: migratedObj });
@@ -87,7 +83,6 @@ window.addEventListener('load', async () => {
     const currentURL = await browser.runtime.sendMessage("getCurrentURL");
     const urlObj = new URL(currentURL);
     const currentTabId = await browser.runtime.sendMessage("getCurrentTabId");
-    console.log(urlObj.hostname.trim() == "");
     if (urlObj.hostname.trim() == "" || !(((_a = urlObj.protocol.match(/^https?:$/)) === null || _a === void 0 ? void 0 : _a.length) > 0))
         document.getElementById("error_cannotChange").classList.remove("hidden_by_default");
     else
@@ -110,31 +105,22 @@ window.addEventListener('load', async () => {
     }
 });
 addButton.addEventListener("click", async () => {
-    console.log("add");
-    const _ = await browser.runtime.sendMessage("addItem");
-    console.log(_);
+    await browser.runtime.sendMessage("addItem");
     await isURLExist();
 });
 removeButton.addEventListener("click", async () => {
-    console.log("remove");
-    const _ = await browser.runtime.sendMessage("removeItem");
-    console.log(_);
+    await browser.runtime.sendMessage("removeItem");
     await isURLExist();
 });
 addTab.addEventListener("click", async () => {
-    console.log("addTab");
-    const _ = await browser.runtime.sendMessage("addTab");
-    console.log(_);
+    await browser.runtime.sendMessage("addTab");
     await isTabExist();
 });
 removeTab.addEventListener("click", async () => {
-    console.log("removeTab");
-    const _ = await browser.runtime.sendMessage("removeTab");
-    console.log(_);
+    await browser.runtime.sendMessage("removeTab");
     await isTabExist();
 });
 optionPage.addEventListener("click", async () => {
-    console.log("optionPage");
     await browser.runtime.openOptionsPage();
 });
 //# sourceMappingURL=script.js.map

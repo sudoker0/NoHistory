@@ -69,7 +69,9 @@ window.addEventListener("load", async () => {
         toggleTransition(config.animation);
     }
 
+    // Loop through the keys in the config
     Object.keys(config).forEach(key => {
+        // Loop through the setting input (like switch or text)
         document.querySelectorAll(".setting_option").forEach(e => {
             var option = e as HTMLInputElement;
             option.onclick = async () => {
@@ -106,23 +108,11 @@ window.addEventListener("load", async () => {
 document.querySelectorAll("button.setting_button").forEach(result => {
     var button = result as HTMLButtonElement;
     button.onclick = () => {
+        // Change the tab page based on the clicked tab button
         document.querySelectorAll("button.setting_button").forEach(e => e.classList.remove("checked"));
         button.classList.add("checked");
         document.querySelectorAll("div.setting_page").forEach(e => e.classList.remove("opened"));
-        switch(button.getAttribute("data-tab")) {
-            case "general":
-                document.getElementById("setting_general").classList.add("opened");
-                break;
-            case "url":
-                document.getElementById("setting_url").classList.add("opened");
-                break;
-            case "backup":
-                document.getElementById("setting_backup").classList.add("opened");
-                break;
-            case "help":
-                document.getElementById("setting_help").classList.add("opened");
-                break;
-        }
+        document.querySelector(`div[data-correspondingTab="${button.getAttribute("data-tab")}"].setting_page`).classList.add("opened");
     }
 })
 
@@ -149,7 +139,7 @@ document.getElementById("import_setting").onclick = async () => {
     location.reload();
 }
 
-const url_table = document.getElementById("setting_url").querySelector("tbody") as HTMLTableSectionElement;
+const url_table = document.querySelector("div[data-correspondingTab='url']").querySelector("tbody") as HTMLTableSectionElement;
 
 async function reloadTable() {
     const result = await browser.storage.local.get("nohistory_urlList");

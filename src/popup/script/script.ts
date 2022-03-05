@@ -15,16 +15,13 @@ const removeTab = document.getElementById("makethetabyeshistory");
 const tabStatus = document.getElementById("status_of_tab");
 const urlStatus = document.getElementById("status_of_url");
 
-browser.tabs.query({currentWindow: true, active: true}).then((tabs) => {
-    let tab = tabs[0]; // Safe to assume there will only be one result
-    console.log(tab.url);
-}, console.error);
-
+// {a: 1, b: 3, d: 2}; {a: 3, c: 4, d: 2} => { a: 1, c: 4, d: 2 }
 function migrateObj(oldObj: Object, newObj: Object): Object {
     oldObj = Object.keys(newObj).reduce((acc, key) => ({ ...acc, [key]: oldObj[key] == null || oldObj[key] == undefined ? newObj[key] : oldObj[key] }), {})
     return oldObj;
 }
 
+// Is the two array equal?
 function areArraysEqualSets (a1: string[], a2: string[]) {
     const superSet = {};
     for (const i of a1) {
@@ -49,13 +46,14 @@ function areArraysEqualSets (a1: string[], a2: string[]) {
 async function updateConf() {
     const oldConf = (await browser.storage.local.get("nohistory_setting"))["nohistory_setting"];
     const currentVersionNumber = browser.runtime.getManifest().version
-    if (oldConf?.versionNumber != currentVersionNumber || !(areArraysEqualSets(Object.keys(oldConf), Object.keys(default_setting)))) {
+    if (oldConf != undefined && (oldConf?.versionNumber != currentVersionNumber || !areArraysEqualSets(Object.keys(oldConf), Object.keys(default_setting)))) {
         var migratedObj = migrateObj(oldConf, default_setting);
         migratedObj["versionNumber"] = currentVersionNumber;
         await browser.storage.local.set({nohistory_setting: migratedObj});
     }
 }
 
+// Since there are two button in the popup page for adding and removing URL, this function will decide what button to show based on if of the current URL exist in the URl list.
 async function isURLExist() {
     const result = await browser.runtime.sendMessage("isRemoveNotClicked");
     if (result) {
@@ -71,6 +69,7 @@ async function isURLExist() {
     }
 }
 
+// Just like the function above, but for tab instead.
 async function isTabExist() {
     const result = await browser.runtime.sendMessage("isTabExist");
     if (result) {
@@ -95,13 +94,15 @@ window.addEventListener('load', async () => {
     const urlObj = new URL(currentURL);
 
     const currentTabId: number = await browser.runtime.sendMessage("getCurrentTabId");
-    console.log(urlObj.hostname.trim() == "");
 
+    // Check if the current URL valid.
     if (urlObj.hostname.trim() == "" || !(urlObj.protocol.match(/^https?:$/)?.length > 0))
+        // Show the error
         document.getElementById("error_cannotChange").classList.remove("hidden_by_default");
     else
         document.getElementById("hidden_wrapper").classList.remove("hidden_by_default");
 
+    // Set the current URL and the tab ID on the popup page
     document.getElementById("page_currently_on").innerText = urlObj.hostname;
     document.getElementById("id_of_tab").innerText = currentTabId.toString();
     const setting = await browser.storage.local.get("nohistory_setting");
@@ -120,44 +121,25 @@ window.addEventListener('load', async () => {
 });
 
 addButton.addEventListener("click", async () => {
-    console.log("add");
-    const _ = await browser.runtime.sendMessage("addItem");
-    console.log(_);
+    await browser.runtime.sendMessage("addItem");
     await isURLExist();
 })
 
 removeButton.addEventListener("click", async () => {
-    console.log("remove");
-    const _ = await browser.runtime.sendMessage("removeItem");
-    console.log(_);
+    await browser.runtime.sendMessage("removeItem");
     await isURLExist();
 })
 
 addTab.addEventListener("click", async () => {
-    console.log("addTab");
-    const _ = await browser.runtime.sendMessage("addTab");
-    console.log(_);
+    await browser.runtime.sendMessage("addTab");
     await isTabExist();
 })
 
 removeTab.addEventListener("click", async () => {
-    console.log("removeTab");
-    const _ = await browser.runtime.sendMessage("removeTab");
-    console.log(_);
+    await browser.runtime.sendMessage("removeTab");
     await isTabExist();
 })
 
 optionPage.addEventListener("click", async () => {
-    console.log("optionPage");
     await browser.runtime.openOptionsPage();
 })
-
-// document.getElementById("toggleDarkMode").onclick = () => {
-//     if (document.getElementById("toggleDarkMode")["checked"]) {
-//         document.body.classList.add("dark_mode");
-//         document.body.classList.remove("light_mode");
-//     } else {
-//         document.body.classList.remove("dark_mode");
-//         document.body.classList.add("light_mode");
-//     }
-// }

@@ -101,20 +101,7 @@ document.querySelectorAll("button.setting_button").forEach(result => {
         document.querySelectorAll("button.setting_button").forEach(e => e.classList.remove("checked"));
         button.classList.add("checked");
         document.querySelectorAll("div.setting_page").forEach(e => e.classList.remove("opened"));
-        switch (button.getAttribute("data-tab")) {
-            case "general":
-                document.getElementById("setting_general").classList.add("opened");
-                break;
-            case "url":
-                document.getElementById("setting_url").classList.add("opened");
-                break;
-            case "backup":
-                document.getElementById("setting_backup").classList.add("opened");
-                break;
-            case "help":
-                document.getElementById("setting_help").classList.add("opened");
-                break;
-        }
+        document.querySelector(`div[data-correspondingTab="${button.getAttribute("data-tab")}"].setting_page`).classList.add("opened");
     };
 });
 document.getElementById("export_setting").onclick = async () => {
@@ -138,7 +125,7 @@ document.getElementById("import_setting").onclick = async () => {
     });
     location.reload();
 };
-const url_table = document.getElementById("setting_url").querySelector("tbody");
+const url_table = document.querySelector("div[data-correspondingTab='url']").querySelector("tbody");
 async function reloadTable() {
     const result = await browser.storage.local.get("nohistory_urlList");
     let urlList = result.nohistory_urlList || [];
