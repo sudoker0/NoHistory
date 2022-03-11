@@ -5,9 +5,12 @@
     transition: none !important;
 }
 
+* {
+    font-family: 'Source Code Pro', monospace;
+}
+
 body {
     transition: color .4s, background-color .4s, border-color .4s;
-    font-family: 'Source Code Pro', monospace;
     background: var(--background);
     color: var(--text);
     // max-width: 900px;
@@ -98,7 +101,7 @@ div#content {
     }
 }
 
-div#setting_url {
+div[data-correspondingtab="url"] {
     button.remove {
         width: 32px;
         height: 32px;

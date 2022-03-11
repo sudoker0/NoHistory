@@ -6,7 +6,7 @@
         {
             "label": "sass: watch",
             "type": "shell",
-            "command": "sass --watch src --style compressed --source-map",
+            "command": "npx sass --watch src --style compressed --source-map",
             "group": "build",
             "runOptions": {
                 "runOn": "folderOpen",
