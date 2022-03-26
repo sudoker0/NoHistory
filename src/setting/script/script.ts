@@ -56,7 +56,7 @@ function openFile(): Promise<string | ArrayBuffer | null> {
 }
 
 window.addEventListener("load", async () => {
-    document.getElementById("versionNumber").innerHTML = browser.runtime.getManifest().version;
+    document.getElementById("versionNumber").innerText = browser.runtime.getManifest().version;
     const setting = await browser.storage.local.get("nohistory_setting");
     const config: {
         darkmode: boolean,
@@ -145,19 +145,19 @@ async function reloadTable() {
     const result = await browser.storage.local.get("nohistory_urlList");
     let urlList: string[] = result.nohistory_urlList || [];
     urlList.forEach((url) => {
-        const template = `
-        <tr data-url="${url}">
-            <td>
-                <p>${url}</p>
-            </td>
-            <td>
-                <button class="remove">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
-                </button>
-            </td>
-        </tr>
+        url_table.insertAdjacentHTML("beforeend", `
+            <tr data-url="${url}">
+                <td>
+                    <p>${url}</p>
+                </td>
+                <td>
+                    <button class="remove">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+                    </button>
+                </td>
+            </tr>
         `
-        url_table.insertAdjacentHTML("beforeend", template);
+        );
     })
     document.querySelectorAll("button.remove").forEach(e => {
         var button = e as HTMLButtonElement;

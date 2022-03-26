@@ -59,12 +59,12 @@ async function isURLExist() {
     if (result) {
         addButton.classList.add("button_off");
         removeButton.classList.remove("button_off");
-        urlStatus.innerHTML = "NO";
+        urlStatus.innerText = "NO";
         urlStatus.classList.add("no");
     } else {
         addButton.classList.remove("button_off");
         removeButton.classList.add("button_off");
-        urlStatus.innerHTML = "YES";
+        urlStatus.innerText = "YES";
         urlStatus.classList.remove("no");
     }
 }
@@ -75,18 +75,18 @@ async function isTabExist() {
     if (result) {
         addTab.classList.add("button_off");
         removeTab.classList.remove("button_off");
-        tabStatus.innerHTML = "NO";
+        tabStatus.innerText = "NO";
         tabStatus.classList.add("no");
     } else {
         addTab.classList.remove("button_off");
         removeTab.classList.add("button_off");
-        tabStatus.innerHTML = "YES";
+        tabStatus.innerText = "YES";
         tabStatus.classList.remove("no");
     }
 }
 
 window.addEventListener('load', async () => {
-    document.getElementById("versionNumber").innerHTML = browser.runtime.getManifest().version;
+    document.getElementById("versionNumber").innerText = browser.runtime.getManifest().version;
     await isURLExist();
     await isTabExist();
     await updateConf();
