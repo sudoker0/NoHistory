@@ -23,8 +23,8 @@
                 <h3>General</h3>
             </button>
             <button class="setting_button" data-tab="url">
-                <svg xmlns="http://www.w3.org/2000/svg" height="36px" viewBox="0 0 24 24" width="36px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg>
-                <h3>URLs</h3>
+                <svg xmlns="http://www.w3.org/2000/svg" height="36px" viewBox="0 0 24 24" width="36px" fill="#000000"><g fill="none"><path d="M0 0h24v24H0V0z"/><path d="M0 0h24v24H0V0z" opacity=".87"/></g><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7zm-4 6h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+                <h3>Match List</h3>
             </button>
             <button class="setting_button" data-tab="backup">
                 <svg xmlns="http://www.w3.org/2000/svg" height="36px" viewBox="0 0 24 24" width="36px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg>
@@ -41,98 +41,144 @@
         </div>
         <div id="content">
             <div class="setting_page opened" data-correspondingTab="general">
-                <h3 class="group">Theme</h3>
-                <div class="option">
-                    <p>Enable Dark Mode</p>
-                    <label class="switch">
-                        <input type="checkbox" id="toggleDarkMode" class="setting_option" data-settingOption="darkmode">
-                        <span class="slider"></span>
-                    </label>
-                </div>
-                <div class="option">
-                    <p>Enable Transition (Not recommend switching off)</p>
-                    <label class="switch">
-                        <input type="checkbox" id="toggleTransition" class="setting_option" data-settingOption="animation">
-                        <span class="slider"></span>
-                    </label>
-                </div>
-                <div class="option">
-                    <p>Enable the status number (status badge)</p>
-                    <label class="switch">
-                        <input type="checkbox" id="toggleStatusBadge" class="setting_option" data-settingOption="statusBadge">
-                        <span class="slider"></span>
-                    </label>
+                <div>
+                    <h3 class="group">Theme</h3>
+                    <div class="option">
+                        <p>Enable Dark Mode</p>
+                        <label class="switch">
+                            <input type="checkbox" id="toggleDarkMode" class="setting_option" data-settingOption="darkmode">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="option">
+                        <p>Enable Transition (Not recommend switching off)</p>
+                        <label class="switch">
+                            <input type="checkbox" id="toggleTransition" class="setting_option" data-settingOption="animation">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="option">
+                        <p>Enable the status number (status badge)</p>
+                        <label class="switch">
+                            <input type="checkbox" id="toggleStatusBadge" class="setting_option" data-settingOption="statusBadge">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
                 </div>
             </div>
             <div class="setting_page" data-correspondingTab="url">
-                <h3 class="group">Search or Add URL</h3>
-                <div id="manage_url_box">
-                    <label id="url_box">
-                        <input type="url" name="addorsearchurl" id="addorsearchurl" placeholder="Ex: https://quanmcpc.site/">
-                    </label>
-                    <!-- <button id="search_url">Search</button> -->
-                    <button class="with_text" id="add_url">Add</button>
-                    <button class="with_text" id="refresh_table">Reload Table</button>
+                <div>
+                    <h3 class="group">URLs</h3>
+                    <div id="manage_url_box">
+                        <label id="url_box">
+                            <input type="url" name="addorsearchurl" id="addorsearchurl" placeholder="Ex: https://quanmcpc.site/">
+                        </label>
+                        <!-- <button id="search_url">Search</button> -->
+                        <button class="with_text" id="add_url">Add</button>
+                        <button class="with_text" id="refresh_url_table">Reload Table</button>
+                    </div>
+                    <table>
+                        <colgroup>
+                            <col style="width: 90%;">
+                            <col style="width: 10%;">
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th>URLs</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="url_table"></tbody>
+                    </table>
                 </div>
-                <h3 class="group">List of URLs</h3>
-                <table>
-                    <colgroup>
-                        <col style="width: 90%;">
-                        <col style="width: 10%;">
-                    </colgroup>
-                    <thead>
-                        <tr>
-                            <th>URLs</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
+                <div>
+                    <h3 class="group">Pattern</h3>
+                    <div id="manage_pattern_box">
+                        <label>
+                            <div id="select_pattern_mode">
+                                <label title="string">
+                                    <input type="radio" name="pattern_mode" id="use_str" checked value="string">
+                                    <span>str</span>
+                                </label>
+                                <label title="regex">
+                                    <input type="radio" name="pattern_mode" id="use_regex" value="regex">
+                                    <span>(.*)</span>
+                                </label>
+                            </div>
+                            <input type="text" name="addorsearchpattern" id="addorsearchpattern" placeholder="Ex: test12345">
+                        </label>
+                        <!-- <button id="search_pattern">Search</button> -->
+                        <button class="with_text" id="add_pattern">Add</button>
+                        <button class="with_text" id="refresh_pattern_table">Reload Table</button>
+                    </div>
+                    <table>
+                        <colgroup>
+                            <col style="width: 80%;">
+                            <col style="width: 10%;">
+                            <col style="width: 10%;">
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th>Patterns</th>
+                                <th>Type</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pattern_table"></tbody>
+                    </table>
+                </div>
             </div>
             <div class="setting_page" data-correspondingTab="backup">
-                <h3 class="group">Actions</h3>
-                <button id="import_setting" class="with_text">Import</button>
-                <button id="export_setting" class="with_text">Export</button>
+                <div>
+                    <h3 class="group">Actions</h3>
+                    <button id="import_setting" class="with_text">Import</button>
+                    <button id="export_setting" class="with_text">Export</button>
+                </div>
             </div>
             <div class="setting_page" data-correspondingTab="help">
-                <h3 class="group">Status Number (Status Badge)</h3>
-                <p>The number that is displayed on the top-right of the extension icon is the status number, which is used to display the current protection status of the current URL/tab using a 2 bit number with different background color.</p>
-                <p>Here's a reference table to decode what does the number and the background color means:</p>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Status Number</th>
-                            <th>Background Color</th>
-                            <th>Meaning</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>00</td>
-                            <td>#FF0000 (Red)</td>
-                            <td>The current tab and the current URL is not in the NoHistory URL and Tab list.</td>
-                        </tr>
-                        <tr>
-                            <td>01</td>
-                            <td>#FF8000 (Orange)</td>
-                            <td>Only the current tab is in the NoHistory Tab list.</td>
-                        </tr>
-                        <tr>
-                            <td>10</td>
-                            <td>#FF8000 (Orange)</td>
-                            <td>Only the current URL is in the NoHistory URL list.</td>
-                        </tr>
-                        <tr>
-                            <td>11</td>
-                            <td>#008000 (Green)</td>
-                            <td>The current tab and the current URL is in the NoHistory URL and Tab list.</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div>
+                    <h3 class="group">Status Number (Status Badge)</h3>
+                    <p>The number that is displayed on the top-right of the extension icon is the status number, which is used to display the current protection status of the current URL/tab using a 2 bit number with different background color.</p>
+                    <p>Here's a reference table to decode what does the number and the background color means:</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Status Number</th>
+                                <th>Background Color</th>
+                                <th>Meaning</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>00</td>
+                                <td>#FF0000 (Red)</td>
+                                <td>The current tab and the current URL is not in the NoHistory URL and Tab list.</td>
+                            </tr>
+                            <tr>
+                                <td>01</td>
+                                <td>#FF8000 (Orange)</td>
+                                <td>Only the current tab is in the NoHistory Tab list.</td>
+                            </tr>
+                            <tr>
+                                <td>10</td>
+                                <td>#FF8000 (Orange)</td>
+                                <td>Only the current URL is in the NoHistory URL list.</td>
+                            </tr>
+                            <tr>
+                                <td>11</td>
+                                <td>#008000 (Green)</td>
+                                <td>The current tab and the current URL is in the NoHistory URL and Tab list.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <div class="setting_page" data-correspondingTab="about">
-                <h3 class="group">About</h3>
-                <p>Created by me, I guess.</p>
+                <div>
+                    <h3 class="group">About</h3>
+                    <p>Created by me, I guess.</p>
+                </div>
+            </div>
         </div>
     </body>
     <script src="./script/script.js"></script>

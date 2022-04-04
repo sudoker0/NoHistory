@@ -86,7 +86,7 @@ async function isTabExist() {
 }
 
 window.addEventListener('load', async () => {
-    document.getElementById("versionNumber").innerText = browser.runtime.getManifest().version;
+    document.getElementById("versionNumber").innerText = browser.runtime.getManifest().version + (browser.runtime.id.includes("@temporary-addon") ? " (If you don't know what you are doing, please install this extension in a normal way.)" : "");
     await isURLExist();
     await isTabExist();
     await updateConf();

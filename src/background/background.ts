@@ -1,4 +1,5 @@
 const tabIdList: number[] = [];
+var storage = () => browser.storage.local
 
 function escapeString(str: string) {
     return str.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
@@ -7,7 +8,7 @@ function escapeString(str: string) {
 // Add or remove link from the URL list in the browser storage
 async function manageLinkInNH(mode: number, link: string) {
     // Get the URL list
-    const result = await browser.storage.local.get("nohistory_urlList")
+    const result = await storage().get("nohistory_urlList")
     var link_url = new URL(link);
     // Is the provided link a valid one (check if it's empty or the protocol isn't http:// or https://)
     if (link_url.hostname.trim() == "" || !(link_url.protocol.match(/^https?:$/).length > 0)) return;
@@ -23,7 +24,7 @@ async function manageLinkInNH(mode: number, link: string) {
             break;
     }
     // Put the new URL list in the browser storage
-    await browser.storage.local.set({nohistory_urlList: urlList});
+    await storage().set({nohistory_urlList: urlList});
 }
 
 // Handle messages from the popup script
@@ -49,7 +50,7 @@ browser.runtime.onMessage.addListener(async (sentMessage, _0, _1) => {
                 resolve(null);
                 break;
             case "isRemoveNotClicked": // Check if the url exist in the URL list in the browser storage
-                const result = await browser.storage.local.get("nohistory_urlList");
+                const result = await storage().get("nohistory_urlList");
                 let urlList: string[] = result.nohistory_urlList || [];
                 resolve(urlList.some(url => url == new URL(tab.url).hostname));
                 break;
@@ -77,18 +78,38 @@ browser.tabs.onRemoved.addListener((tabId) => {
 
 browser.tabs.onUpdated.addListener((tabId, _0, tab) => {
     return new Promise(async (resolve, _) => {
-        const result = await browser.storage.local.get("nohistory_urlList");
-        if (result?.nohistory_urlList == null) {
+        const url_list = await storage().get("nohistory_urlList");
+        const pattern_list = await storage().get("nohistory_patternList");
+        let urlList: string[] = url_list.nohistory_urlList || [];
+        let patternList: { type: string, pattern: string | RegExp }[] = pattern_list.nohistory_patternList || [];
+
+        if (url_list?.nohistory_urlList == null) {
             // Create the URL list in the browser storage
-            await browser.storage.local.set({
+            await storage().set({
                 "nohistory_urlList": [],
             })
         }
 
-        let urlList: string[] = result.nohistory_urlList || [];
+        if (pattern_list?.nohistory_patternList == null) {
+            // Create the pattern list in the browser storage
+            await storage().set({
+                "nohistory_patternList": [],
+            })
+        }
 
         // Check if the current URL is in the URL list OR if the tab is in the tab list
-        if ((urlList.some(url => url == new URL(tab.url).hostname)) || (tabIdList.some(id => id == tabId))) {
+        if (
+            urlList.some(url => url == new URL(tab.url).hostname) ||
+            tabIdList.some(id => id == tabId) || patternList.some(pattern => {
+            switch (pattern.type) {
+                case "string":
+                    return tab.url.indexOf(`${pattern.pattern}`) != -1;
+                case "regex":
+                    return tab.url.match(pattern.pattern) != null;
+                default:
+                    return false;
+            }
+        })) {
             // Delete the current URL from history
             await browser.history.deleteUrl({url: tab.url});
             resolve(true);
@@ -98,13 +119,13 @@ browser.tabs.onUpdated.addListener((tabId, _0, tab) => {
 
 // Handle the badge text (the number on the top-right of the extension icon)
 browser.tabs.onActivated.addListener(async (e) => {
-    const setting = await browser.storage.local.get("nohistory_setting");
+    const setting = await storage().get("nohistory_setting");
     if (!setting.nohistory_setting.statusBadge) return;
     // Does the tab exist in the tab list?
     const cond_1 = tabIdList.some(id => id == e.tabId)
 
     const tabs = await browser.tabs.query({currentWindow: true, active: true})
-    const result = await browser.storage.local.get("nohistory_urlList");
+    const result = await storage().get("nohistory_urlList");
     let urlList: string[] = result.nohistory_urlList || [];
     // Does the current URL exist in the URL list?
     const cond_2 = urlList.some(url => url == new URL(tabs[0].url).hostname)

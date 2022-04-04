@@ -55,7 +55,7 @@ main {
             display: block;
         }
 
-        &:hover {
+        &:hover, &:focus {
             background: var(--text);
             color: var(--background);
             cursor: pointer;

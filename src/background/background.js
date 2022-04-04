@@ -1,9 +1,10 @@
 const tabIdList = [];
+var storage = () => browser.storage.local;
 function escapeString(str) {
     return str.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
 }
 async function manageLinkInNH(mode, link) {
-    const result = await browser.storage.local.get("nohistory_urlList");
+    const result = await storage().get("nohistory_urlList");
     var link_url = new URL(link);
     if (link_url.hostname.trim() == "" || !(link_url.protocol.match(/^https?:$/).length > 0))
         return;
@@ -18,7 +19,7 @@ async function manageLinkInNH(mode, link) {
         default:
             break;
     }
-    await browser.storage.local.set({ nohistory_urlList: urlList });
+    await storage().set({ nohistory_urlList: urlList });
 }
 browser.runtime.onMessage.addListener(async (sentMessage, _0, _1) => {
     return new Promise(async (resolve, reject) => {
@@ -42,7 +43,7 @@ browser.runtime.onMessage.addListener(async (sentMessage, _0, _1) => {
                 resolve(null);
                 break;
             case "isRemoveNotClicked":
-                const result = await browser.storage.local.get("nohistory_urlList");
+                const result = await storage().get("nohistory_urlList");
                 let urlList = result.nohistory_urlList || [];
                 resolve(urlList.some(url => url == new URL(tab.url).hostname));
                 break;
@@ -66,26 +67,43 @@ browser.tabs.onRemoved.addListener((tabId) => {
 });
 browser.tabs.onUpdated.addListener((tabId, _0, tab) => {
     return new Promise(async (resolve, _) => {
-        const result = await browser.storage.local.get("nohistory_urlList");
-        if ((result === null || result === void 0 ? void 0 : result.nohistory_urlList) == null) {
-            await browser.storage.local.set({
+        const url_list = await storage().get("nohistory_urlList");
+        const pattern_list = await storage().get("nohistory_patternList");
+        let urlList = url_list.nohistory_urlList || [];
+        let patternList = pattern_list.nohistory_patternList || [];
+        if ((url_list === null || url_list === void 0 ? void 0 : url_list.nohistory_urlList) == null) {
+            await storage().set({
                 "nohistory_urlList": [],
             });
         }
-        let urlList = result.nohistory_urlList || [];
-        if ((urlList.some(url => url == new URL(tab.url).hostname)) || (tabIdList.some(id => id == tabId))) {
+        if ((pattern_list === null || pattern_list === void 0 ? void 0 : pattern_list.nohistory_patternList) == null) {
+            await storage().set({
+                "nohistory_patternList": [],
+            });
+        }
+        if (urlList.some(url => url == new URL(tab.url).hostname) ||
+            tabIdList.some(id => id == tabId) || patternList.some(pattern => {
+            switch (pattern.type) {
+                case "string":
+                    return tab.url.indexOf(`${pattern.pattern}`) != -1;
+                case "regex":
+                    return tab.url.match(pattern.pattern) != null;
+                default:
+                    return false;
+            }
+        })) {
             await browser.history.deleteUrl({ url: tab.url });
             resolve(true);
         }
     });
 });
 browser.tabs.onActivated.addListener(async (e) => {
-    const setting = await browser.storage.local.get("nohistory_setting");
+    const setting = await storage().get("nohistory_setting");
     if (!setting.nohistory_setting.statusBadge)
         return;
     const cond_1 = tabIdList.some(id => id == e.tabId);
     const tabs = await browser.tabs.query({ currentWindow: true, active: true });
-    const result = await browser.storage.local.get("nohistory_urlList");
+    const result = await storage().get("nohistory_urlList");
     let urlList = result.nohistory_urlList || [];
     const cond_2 = urlList.some(url => url == new URL(tabs[0].url).hostname);
     var color = [0, 0, 0, 0];

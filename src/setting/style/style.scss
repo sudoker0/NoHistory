@@ -28,7 +28,7 @@ body {
     display: grid;
     grid-template-areas: "title title" "navbar content";
     grid-template-columns: 20% 80%;
-    grid-template-rows: 96px auto;
+    grid-template-rows: 96px calc(100% - 96px);
 }
 
 button {
@@ -36,7 +36,7 @@ button {
     background: var(--text);
     color: var(--background);
     border: none;
-    &:hover {
+    &:hover, &:focus {
         background: var(--background);
         color: var(--text);
         cursor: pointer;
@@ -57,6 +57,7 @@ div#navbar {
     grid-area: navbar;
     display: flex;
     flex-direction: column;
+    overflow-y: auto;
     button {
         margin: 8px;
         background: transparent;
@@ -65,7 +66,7 @@ div#navbar {
         align-items: center;
         gap: 12px;
         padding: 0 16px;
-        &:hover {
+        &:hover, &:focus {
             background: var(--text);
             color: var(--background);
             svg {
@@ -114,7 +115,7 @@ div[data-correspondingtab="url"] {
         svg {
             fill: var(--background);
         }
-        &:hover {
+        &:hover, &:focus {
             background: red;
             color: white;
             cursor: pointer;
@@ -153,6 +154,9 @@ h3.group {
     color: var(--background);
     padding: 8px;
     margin: 0 0 16px 0;
+    position: sticky !important;
+    top: 0;
+    z-index: 10;
 
     &:not(:first-child) {
         margin-top: 16px;
@@ -250,11 +254,14 @@ button.with_text {
     font-size: 1.2rem;
     font-family: inherit;
     padding: 4px 8px;
-    &:hover {
-        background: var(--url-color);
-        color: var(--background);
+    border: 1px solid var(--text);
+    &:hover, &:focus {
+        background: var(--background);
+        color: var(--text);
     }
 }
+
+button.setting_button h3 { text-align: left; }
 
 @media (max-width: 800px) {
     button.setting_button svg {
@@ -264,4 +271,35 @@ button.with_text {
 
 pre#infinite_leg {
     margin: 0;
+}
+
+div#manage_pattern_box > label {
+    display: flex;
+    gap: 12px;
+}
+
+div#select_pattern_mode {
+    width: fit-content;
+    height: fit-content;
+    display: flex;
+    flex-direction: row;
+    gap: 0px;
+    border: 1px solid var(--text);
+    padding: 4px 0;
+    label {
+        cursor: pointer;
+        input {
+            position: absolute;
+            top: -100%;
+            left: -100%;
+            opacity: 0;
+            &:checked + span {
+                background-color: var(--text);
+                color: var(--background);
+            }
+        }
+        span {
+            padding: 4px;
+        }
+    }
 }
