@@ -32,7 +32,7 @@ mkdir build
 rm -rfv build/*
 
 echo -e "${txtgrn}===>${txtwht} Copying files..."
-cp -R src/. build/
+cp -R src/* build/
 
 echo -e "${txtgrn}===>${txtwht} Compiling stylesheets..."
 npx sass build --style compressed --source-map
