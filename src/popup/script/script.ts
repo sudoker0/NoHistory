@@ -1,3 +1,6 @@
+var storage = () => browser.storage.local
+var qSel = (selector: string) => document.querySelector(selector) as HTMLElement;
+
 const default_setting = {
     versionNumber: browser.runtime.getManifest().version,
     darkmode: false,
@@ -5,15 +8,15 @@ const default_setting = {
     statusBadge: true,
 }
 
-const addButton = document.getElementById("addthispage");
-const removeButton = document.getElementById("removethispage");
-const optionPage = document.getElementById("managenohistory");
+const addButton = qSel("#addthispage");
+const removeButton = qSel("#removethispage");
+const optionPage = qSel("#managenohistory");
 
-const addTab = document.getElementById("makethetabnohistory");
-const removeTab = document.getElementById("makethetabyeshistory");
+const addTab = qSel("#makethetabnohistory");
+const removeTab = qSel("#makethetabyeshistory");
 
-const tabStatus = document.getElementById("status_of_tab");
-const urlStatus = document.getElementById("status_of_url");
+const tabStatus = qSel("#status_of_tab");
+const urlStatus = qSel("#status_of_url");
 
 // {a: 1, b: 3, d: 2}; {a: 3, c: 4, d: 2} => { a: 1, c: 4, d: 2 }
 function migrateObj(oldObj: Object, newObj: Object): Object {
@@ -86,7 +89,7 @@ async function isTabExist() {
 }
 
 window.addEventListener('load', async () => {
-    document.getElementById("versionNumber").innerText = browser.runtime.getManifest().version + (browser.runtime.id.includes("@temporary-addon") ? " (If you don't know what you are doing, please install this extension in a normal way.)" : "");
+    qSel("#versionNumber").innerText = browser.runtime.getManifest().version + (browser.runtime.id.includes("@temporary-addon") ? " (If you don't know what you are doing, please install this extension in a normal way.)" : "");
     await isURLExist();
     await isTabExist();
     await updateConf();
@@ -98,13 +101,13 @@ window.addEventListener('load', async () => {
     // Check if the current URL valid.
     if (urlObj.hostname.trim() == "" || !(urlObj.protocol.match(/^https?:$/)?.length > 0))
         // Show the error
-        document.getElementById("error_cannotChange").classList.remove("hidden_by_default");
+        qSel("#error_cannotChange").classList.remove("hidden_by_default");
     else
-        document.getElementById("hidden_wrapper").classList.remove("hidden_by_default");
+        qSel("#hidden_wrapper").classList.remove("hidden_by_default");
 
     // Set the current URL and the tab ID on the popup page
-    document.getElementById("page_currently_on").innerText = urlObj.hostname;
-    document.getElementById("id_of_tab").innerText = currentTabId.toString();
+    qSel("#page_currently_on").innerText = urlObj.hostname;
+    qSel("#id_of_tab").innerText = currentTabId.toString();
     const setting = await browser.storage.local.get("nohistory_setting");
     if (setting?.nohistory_setting == null) {
         await browser.storage.local.set({

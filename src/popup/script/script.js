@@ -1,16 +1,18 @@
+var storage = () => browser.storage.local;
+var qSel = (selector) => document.querySelector(selector);
 const default_setting = {
     versionNumber: browser.runtime.getManifest().version,
     darkmode: false,
     animation: true,
     statusBadge: true,
 };
-const addButton = document.getElementById("addthispage");
-const removeButton = document.getElementById("removethispage");
-const optionPage = document.getElementById("managenohistory");
-const addTab = document.getElementById("makethetabnohistory");
-const removeTab = document.getElementById("makethetabyeshistory");
-const tabStatus = document.getElementById("status_of_tab");
-const urlStatus = document.getElementById("status_of_url");
+const addButton = qSel("#addthispage");
+const removeButton = qSel("#removethispage");
+const optionPage = qSel("#managenohistory");
+const addTab = qSel("#makethetabnohistory");
+const removeTab = qSel("#makethetabyeshistory");
+const tabStatus = qSel("#status_of_tab");
+const urlStatus = qSel("#status_of_url");
 function migrateObj(oldObj, newObj) {
     oldObj = Object.keys(newObj).reduce((acc, key) => (Object.assign(Object.assign({}, acc), { [key]: oldObj[key] == null || oldObj[key] == undefined ? newObj[key] : oldObj[key] })), {});
     return oldObj;
@@ -76,7 +78,7 @@ async function isTabExist() {
 }
 window.addEventListener('load', async () => {
     var _a, _b;
-    document.getElementById("versionNumber").innerText = browser.runtime.getManifest().version + (browser.runtime.id.includes("@temporary-addon") ? " (If you don't know what you are doing, please install this extension in a normal way.)" : "");
+    qSel("#versionNumber").innerText = browser.runtime.getManifest().version + (browser.runtime.id.includes("@temporary-addon") ? " (If you don't know what you are doing, please install this extension in a normal way.)" : "");
     await isURLExist();
     await isTabExist();
     await updateConf();
@@ -84,11 +86,11 @@ window.addEventListener('load', async () => {
     const urlObj = new URL(currentURL);
     const currentTabId = await browser.runtime.sendMessage("getCurrentTabId");
     if (urlObj.hostname.trim() == "" || !(((_a = urlObj.protocol.match(/^https?:$/)) === null || _a === void 0 ? void 0 : _a.length) > 0))
-        document.getElementById("error_cannotChange").classList.remove("hidden_by_default");
+        qSel("#error_cannotChange").classList.remove("hidden_by_default");
     else
-        document.getElementById("hidden_wrapper").classList.remove("hidden_by_default");
-    document.getElementById("page_currently_on").innerText = urlObj.hostname;
-    document.getElementById("id_of_tab").innerText = currentTabId.toString();
+        qSel("#hidden_wrapper").classList.remove("hidden_by_default");
+    qSel("#page_currently_on").innerText = urlObj.hostname;
+    qSel("#id_of_tab").innerText = currentTabId.toString();
     const setting = await browser.storage.local.get("nohistory_setting");
     if ((setting === null || setting === void 0 ? void 0 : setting.nohistory_setting) == null) {
         await browser.storage.local.set({

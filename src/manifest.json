@@ -2,7 +2,7 @@
     "author": "QuanMCPC",
     "manifest_version": 2,
     "name": "NoHistory",
-    "version": "0.0.5",
+    "version": "0.0.6",
     "description": "When you want to hide something, but don't want to open a private window.",
     "permissions": [
         "activeTab",
