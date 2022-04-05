@@ -4,7 +4,7 @@ type Pattern = { type: string, pattern: string | RegExp }
 var storage = () => browser.storage.local
 var storage_get = async (key: string) => {
     const result = await storage().get(key)
-    return result[key]
+    return result[key] ?? {}
 }
 
 var qSel = (selector: string) => document.querySelector(selector) as HTMLElement;
@@ -162,7 +162,13 @@ qSel("#export_setting").onclick = async () => {
 qSel("#import_setting").onclick = async () => {
     const result = await openFile();
     if (result == null || typeof result != "string") return;
-    var data = JSON.parse(result);
+    try {
+        var data = JSON.parse(result);
+    }
+    catch(e) {
+        alert("Invalid JSON file.");
+        return;
+    }
     data.patternList.forEach((t, i) => {
         switch (t.type) {
             case "regex":

@@ -74,6 +74,7 @@ div#navbar {
             }
         }
         svg {
+            transition: fill .2s;
             fill: var(--text);
         }
     }

@@ -6,11 +6,9 @@ const default_setting = {
     animation: true,
     statusBadge: true,
 };
-const addButton = qSel("#addthispage");
-const removeButton = qSel("#removethispage");
+const urlButton = qSel("#thispage");
 const optionPage = qSel("#managenohistory");
-const addTab = qSel("#makethetabnohistory");
-const removeTab = qSel("#makethetabyeshistory");
+const tabButton = qSel("#makethetab");
 const tabStatus = qSel("#status_of_tab");
 const urlStatus = qSel("#status_of_url");
 function migrateObj(oldObj, newObj) {
@@ -47,16 +45,14 @@ async function updateConf() {
     }
 }
 async function isURLExist() {
-    const result = await browser.runtime.sendMessage("isRemoveNotClicked");
+    const result = await browser.runtime.sendMessage("isURLExist");
     if (result) {
-        addButton.classList.add("button_off");
-        removeButton.classList.remove("button_off");
+        urlButton.innerText = "Remove this page from NoHistory";
         urlStatus.innerText = "NO";
         urlStatus.classList.add("no");
     }
     else {
-        addButton.classList.remove("button_off");
-        removeButton.classList.add("button_off");
+        urlButton.innerText = "Add this page to NoHistory";
         urlStatus.innerText = "YES";
         urlStatus.classList.remove("no");
     }
@@ -64,14 +60,12 @@ async function isURLExist() {
 async function isTabExist() {
     const result = await browser.runtime.sendMessage("isTabExist");
     if (result) {
-        addTab.classList.add("button_off");
-        removeTab.classList.remove("button_off");
+        tabButton.innerText = "Enable saving links from this tab to history";
         tabStatus.innerText = "NO";
         tabStatus.classList.add("no");
     }
     else {
-        addTab.classList.remove("button_off");
-        removeTab.classList.add("button_off");
+        tabButton.innerText = "Disable saving links from this tab to history";
         tabStatus.innerText = "YES";
         tabStatus.classList.remove("no");
     }
@@ -106,20 +100,14 @@ window.addEventListener('load', async () => {
         document.body.classList.add("light_mode");
     }
 });
-addButton.addEventListener("click", async () => {
-    await browser.runtime.sendMessage("addItem");
+urlButton.addEventListener("click", async () => {
+    const result = await browser.runtime.sendMessage("isURLExist");
+    await browser.runtime.sendMessage(result ? "removeItem" : "addItem");
     await isURLExist();
 });
-removeButton.addEventListener("click", async () => {
-    await browser.runtime.sendMessage("removeItem");
-    await isURLExist();
-});
-addTab.addEventListener("click", async () => {
-    await browser.runtime.sendMessage("addTab");
-    await isTabExist();
-});
-removeTab.addEventListener("click", async () => {
-    await browser.runtime.sendMessage("removeTab");
+tabButton.addEventListener("click", async () => {
+    const result = await browser.runtime.sendMessage("isTabExist");
+    await browser.runtime.sendMessage(result ? "removeTab" : "addTab");
     await isTabExist();
 });
 optionPage.addEventListener("click", async () => {

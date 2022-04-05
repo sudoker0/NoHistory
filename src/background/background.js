@@ -42,7 +42,7 @@ browser.runtime.onMessage.addListener(async (sentMessage, _0, _1) => {
                 tabIdList.splice(tabIdList.indexOf(tab.id), 1);
                 resolve(null);
                 break;
-            case "isRemoveNotClicked":
+            case "isURLExist":
                 const result = await storage().get("nohistory_urlList");
                 let urlList = result.nohistory_urlList || [];
                 resolve(urlList.some(url => url == new URL(tab.url).hostname));

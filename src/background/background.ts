@@ -49,7 +49,7 @@ browser.runtime.onMessage.addListener(async (sentMessage, _0, _1) => {
                 tabIdList.splice(tabIdList.indexOf(tab.id), 1);
                 resolve(null);
                 break;
-            case "isRemoveNotClicked": // Check if the url exist in the URL list in the browser storage
+            case "isURLExist": // Check if the url exist in the URL list in the browser storage
                 const result = await storage().get("nohistory_urlList");
                 let urlList: string[] = result.nohistory_urlList || [];
                 resolve(urlList.some(url => url == new URL(tab.url).hostname));

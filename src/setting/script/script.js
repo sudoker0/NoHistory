@@ -1,8 +1,9 @@
 const reRegex = /\/(.*)\/[gmiyu]*/g;
 var storage = () => browser.storage.local;
 var storage_get = async (key) => {
+    var _a;
     const result = await storage().get(key);
-    return result[key];
+    return (_a = result[key]) !== null && _a !== void 0 ? _a : {};
 };
 var qSel = (selector) => document.querySelector(selector);
 var qSelAll = (selector) => document.querySelectorAll(selector);
@@ -144,7 +145,13 @@ qSel("#import_setting").onclick = async () => {
     const result = await openFile();
     if (result == null || typeof result != "string")
         return;
-    var data = JSON.parse(result);
+    try {
+        var data = JSON.parse(result);
+    }
+    catch (e) {
+        alert("Invalid JSON file.");
+        return;
+    }
     data.patternList.forEach((t, i) => {
         switch (t.type) {
             case "regex":

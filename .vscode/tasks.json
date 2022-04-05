@@ -15,7 +15,7 @@
         {
             "label": "tsc: watch",
             "type": "shell",
-            "command": "npx tsc --watch --project tsconfig.json --outDir ./src",
+            "command": "npx tsc --watch --project tsconfig.json",
             "group": "build",
             "runOptions": {
                 "runOn": "folderOpen",
