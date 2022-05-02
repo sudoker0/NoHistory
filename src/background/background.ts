@@ -100,15 +100,16 @@ browser.tabs.onUpdated.addListener((tabId, _0, tab) => {
         // Check if the current URL is in the URL list OR if the tab is in the tab list
         if (
             urlList.some(url => url == new URL(tab.url).hostname) ||
-            tabIdList.some(id => id == tabId) || patternList.some(pattern => {
-            switch (pattern.type) {
-                case "string":
-                    return tab.url.indexOf(`${pattern.pattern}`) != -1;
-                case "regex":
-                    return tab.url.match(pattern.pattern) != null;
-                default:
-                    return false;
-            }
+            tabIdList.some(id => id == tabId) ||
+            patternList.some(pattern => {
+                switch (pattern.type) {
+                    case "string":
+                        return tab.title.indexOf(`${pattern.pattern}`) != -1;
+                    case "regex":
+                        return tab.title.match(pattern.pattern) != null;
+                    default:
+                        return false;
+                }
         })) {
             // Delete the current URL from history
             await browser.history.deleteUrl({url: tab.url});
@@ -130,28 +131,26 @@ browser.tabs.onActivated.addListener(async (e) => {
     // Does the current URL exist in the URL list?
     const cond_2 = urlList.some(url => url == new URL(tabs[0].url).hostname)
 
-    var color: browser.browserAction.ColorValue = [0, 0, 0, 0];
-    var rating: string = "";
+    var pattern = await storage().get("nohistory_patternList");
+    var patternList: { type: string, pattern: string | RegExp }[] = pattern.nohistory_patternList || [];
+    const cond_3 = patternList.some(pattern => {
+        switch (pattern.type) {
+            case "string":
+                return tabs[0].title.indexOf(`${pattern.pattern}`) != -1;
+            case "regex":
+                return tabs[0].title.match(pattern.pattern) != null;
+            default:
+                return false;
+        }
+    })
 
-    if (!cond_1 && !cond_2){
-        // If the tab doesn't exist in the tab list and the current URL doesn't exist in the URL list
-        color = [255, 0, 0, 255];
-        rating = "00";
-    } else if (cond_1 && !cond_2) {
-        // If the tab exist in the tab list and the current URL doesn't exist in the URL list
-        color = [255, 128, 0, 255];
-        rating = "01"
-    } else if (!cond_1 && cond_2) {
-        // If the tab doesn't exist in the tab list and the current URL exist in the URL list
-        color = [255, 128, 0, 255];
-        rating = "10";
-    } else {
-        // If the tab exist in the tab list and the current URL exist in the URL list
-        color = [0, 128, 0, 255];
-        rating = "11";
-    }
+    var rating: number[] = [0, 0, 0];
+    if (cond_2) rating[0] = 1;
+    if (cond_1) rating[1] = 1;
+    if (cond_3) rating[2] = 1;
+    var final_rating = rating.join("");
 
-    browser.browserAction.setBadgeText({ text: rating });
-    browser.browserAction.setBadgeBackgroundColor({ color: color });
+    browser.browserAction.setBadgeText({ text: final_rating });
+    browser.browserAction.setBadgeBackgroundColor({ color: [0, 0, 0, 255] });
     browser.browserAction.setBadgeTextColor({ color: [255, 255, 255, 255] });
 })

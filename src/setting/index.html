@@ -42,7 +42,6 @@
         <div id="content">
             <div class="setting_page opened" data-correspondingTab="general">
                 <div>
-                    <h3 class="group">Theme</h3>
                     <div class="option">
                         <p>Enable Dark Mode</p>
                         <label class="switch">
@@ -92,7 +91,7 @@
                     </table>
                 </div>
                 <div>
-                    <h3 class="group">Pattern</h3>
+                    <h3 class="group">Link Title</h3>
                     <div id="manage_pattern_box">
                         <label>
                             <div id="select_pattern_mode">
@@ -118,7 +117,7 @@
                         </colgroup>
                         <thead>
                             <tr>
-                                <th>Patterns</th>
+                                <th>Title</th>
                                 <th>Type</th>
                                 <th>Action</th>
                             </tr>
@@ -137,36 +136,28 @@
             <div class="setting_page" data-correspondingTab="help">
                 <div>
                     <h3 class="group">Status Number (Status Badge)</h3>
-                    <p>The number that is displayed on the top-right of the extension icon is the status number, which is used to display the current protection status of the current URL/tab using a 2 bit number with different background color.</p>
-                    <p>Here's a reference table to decode what does the number and the background color means:</p>
+                    <p>On the top-right of the extension icon is the status number, which is used to display what has been matched in the current tab (the tab ID, the tab URL, etc.) to stop the URL that matched from getting saved.</p>
+                    <p>The position of the digit showed what the extension matches in the current URL/tab, while the actual digit showed if the condition was met (Number 0 means NOT MATCHED, while number 1 means MATCHED)</p>
+                    <p>Here's a reference table to decode what does the number means:</p>
                     <table>
                         <thead>
                             <tr>
-                                <th>Status Number</th>
-                                <th>Background Color</th>
-                                <th>Meaning</th>
+                                <th>Digit positioned # in the status number</th>
+                                <th>What it mached</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>00</td>
-                                <td>#FF0000 (Red)</td>
-                                <td>The current tab and the current URL is not in the NoHistory URL and Tab list.</td>
+                                <td>#1</td>
+                                <td>The URL in the current tab.</td>
                             </tr>
                             <tr>
-                                <td>01</td>
-                                <td>#FF8000 (Orange)</td>
-                                <td>Only the current tab is in the NoHistory Tab list.</td>
+                                <td>#2</td>
+                                <td>The current tab ID.</td>
                             </tr>
                             <tr>
-                                <td>10</td>
-                                <td>#FF8000 (Orange)</td>
-                                <td>Only the current URL is in the NoHistory URL list.</td>
-                            </tr>
-                            <tr>
-                                <td>11</td>
-                                <td>#008000 (Green)</td>
-                                <td>The current tab and the current URL is in the NoHistory URL and Tab list.</td>
+                                <td>#3</td>
+                                <td>The current page's title.</td>
                             </tr>
                         </tbody>
                     </table>
