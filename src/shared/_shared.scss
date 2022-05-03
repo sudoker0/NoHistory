@@ -1,0 +1,29 @@
+.light_mode {
+    --background: #ffffff;
+    --text: #333;
+    --yes-color: #B30000;
+    --no-color: #006600;
+    --url-color: #0000FF;
+    // --switch-bg: #666;
+    // --switch-fg: #fff;
+    --tab-color: #B30000;
+    --button-enabled: #B30000;
+    --button-disabled: #006600;
+}
+
+.dark_mode {
+    --background: #333;
+    --text: #ffffff;
+    --yes-color: #FF8000;
+    --no-color: #00FF00;
+    --url-color: #00FFFF;
+    // --switch-bg: #fff;
+    // --switch-fg: #666;
+    --tab-color: #FFB300;
+    --button-enabled: #FF3D3D;
+    --button-disabled: #00B800;
+}
+
+* {
+    font-family: 'Source Code Pro', monospace;
+}

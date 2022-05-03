@@ -11,7 +11,10 @@
     </head>
     <body class="light_mode">
         <div id="title">
-            <img src="../icons/nohistory-logo-512.png" alt="NoHistory logo" width="64" height="64">
+            <div id="title_image">
+                <img src="../icons/nohistory-logo-512.png" alt="NoHistory logo" width="64" height="64">
+                <img id="title_image_different" src="../icons/settings.svg" alt="Tools">
+            </div>
             <div>
                 <h1>NoHistory Settings</h1>
                 <p>Version <span id="versionNumber"></span></p>
@@ -94,7 +97,7 @@
                     <h3 class="group">Link Title</h3>
                     <div id="manage_pattern_box">
                         <label>
-                            <div id="select_pattern_mode">
+                            <div class="toggle_box">
                                 <label title="string">
                                     <input type="radio" name="pattern_mode" id="use_str" checked value="string">
                                     <span>str</span>
@@ -140,6 +143,10 @@
                     <p>The position of the digit showed what the extension matches in the current URL/tab, while the actual digit showed if the condition was met (Number 0 means NOT MATCHED, while number 1 means MATCHED)</p>
                     <p>Here's a reference table to decode what does the number means:</p>
                     <table>
+                        <colgroup>
+                            <col style="width: 50%;">
+                            <col style="width: 50%;">
+                        </colgroup>
                         <thead>
                             <tr>
                                 <th>Digit positioned # in the status number</th>

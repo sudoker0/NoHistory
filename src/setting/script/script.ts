@@ -1,14 +1,20 @@
 const reRegex = /\/(.*)\/[gmiyu]*/g;
-type Pattern = { type: string, pattern: string | RegExp }
 
-var storage = () => browser.storage.local
-var storage_get = async (key: string) => {
+function storage() { return browser.storage.local };
+
+async function storage_get(key: string): Promise<any | false> {
     const result = await storage().get(key)
-    return result[key] ?? {}
+    return result[key] ?? false
 }
 
-var qSel = (selector: string) => document.querySelector(selector) as HTMLElement;
-var qSelAll = (selector: string) => document.querySelectorAll(selector) as NodeListOf<HTMLElement>;
+function qSel(selector: string): HTMLElement {
+    return document.querySelector(selector)
+}
+
+function qSelAll(selector: string): NodeListOf<HTMLElement> {
+    return document.querySelectorAll(selector)
+}
+
 
 function toggleDarkMode(isIt: boolean) {
     if (isIt) {
@@ -79,12 +85,7 @@ function openFile(): Promise<string | ArrayBuffer | null> {
 
 window.addEventListener("load", async () => {
     qSel("#versionNumber").innerText = browser.runtime.getManifest().version + (browser.runtime.id.includes("@temporary-addon") ? " (If you don't know what you are doing, please install this extension in a normal way.)" : "");
-    const setting = await storage_get("nohistory_setting");
-    const config: {
-        darkmode: boolean,
-        animation: boolean,
-        statusBadge: boolean
-    } = setting;
+    const config: Settings = await storage_get("nohistory_setting");
 
     function toggleStuff() {
         toggleDarkMode(config.darkmode);
@@ -163,13 +164,13 @@ qSel("#import_setting").onclick = async () => {
     const result = await openFile();
     if (result == null || typeof result != "string") return;
     try {
-        var data = JSON.parse(result);
+        var data: Config = JSON.parse(result);
     }
     catch(e) {
         alert("Invalid JSON file.");
         return;
     }
-    data.patternList.forEach((t, i) => {
+    data.patternList?.forEach((t, i) => {
         switch (t.type) {
             case "regex":
                 data.patternList[i].pattern = new RegExp(t.pattern, "gi");
@@ -183,7 +184,6 @@ qSel("#import_setting").onclick = async () => {
         "nohistory_urlList": data.urlList,
         "nohistory_patternList": data.patternList
     }
-
     if (Object.keys(settingJSON).some(t => settingJSON[t] == null || settingJSON[t] == undefined)) {
         alert("The file you uploaded is not a valid config file.")
         return;

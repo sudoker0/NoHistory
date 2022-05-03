@@ -1,6 +1,16 @@
-var storage = () => browser.storage.local;
-var qSel = (selector) => document.querySelector(selector);
-var qSelAll = (selector) => document.querySelectorAll(selector);
+function storage() { return browser.storage.local; }
+;
+async function storage_get(key) {
+    var _a;
+    const result = await storage().get(key);
+    return (_a = result[key]) !== null && _a !== void 0 ? _a : false;
+}
+function qSel(selector) {
+    return document.querySelector(selector);
+}
+function qSelAll(selector) {
+    return document.querySelectorAll(selector);
+}
 var validURL = true;
 const default_setting = {
     versionNumber: browser.runtime.getManifest().version,
@@ -11,6 +21,7 @@ const default_setting = {
 const urlButton = qSel("#thispage");
 const tabButton = qSel("#makethetab");
 const optionPage = qSel("#managenohistory");
+const tools = qSel("#tools");
 function migrateObj(oldObj, newObj) {
     oldObj = Object.keys(newObj).reduce((acc, key) => (Object.assign(Object.assign({}, acc), { [key]: oldObj[key] == null || oldObj[key] == undefined ? newObj[key] : oldObj[key] })), {});
     return oldObj;
@@ -36,12 +47,12 @@ function areArraysEqualSets(a1, a2) {
     return true;
 }
 async function updateConf() {
-    const oldConf = (await browser.storage.local.get("nohistory_setting"))["nohistory_setting"];
+    const oldConf = await storage_get("nohistory_setting");
     const currentVersionNumber = browser.runtime.getManifest().version;
     if (oldConf != undefined && ((oldConf === null || oldConf === void 0 ? void 0 : oldConf.versionNumber) != currentVersionNumber || !areArraysEqualSets(Object.keys(oldConf), Object.keys(default_setting)))) {
         var migratedObj = migrateObj(oldConf, default_setting);
         migratedObj["versionNumber"] = currentVersionNumber;
-        await browser.storage.local.set({ nohistory_setting: migratedObj });
+        await storage().set({ nohistory_setting: migratedObj });
     }
 }
 function toggleButton(button, on) {
@@ -49,7 +60,7 @@ function toggleButton(button, on) {
         return false;
     button.querySelector(".on").classList[on ? "remove" : "add"]("not");
     button.querySelector(".off").classList[on ? "add" : "remove"]("not");
-    button.style.setProperty("--current-status-color", on ? "var(--no-color)" : "var(--yes-color)");
+    button.style.setProperty("--current-status-color", on ? "var(--button-disabled)" : "var(--button-enabled)");
 }
 async function isURLExist() {
     const result = await browser.runtime.sendMessage("isURLExist");
@@ -62,7 +73,7 @@ async function isTabExist() {
     toggleButton(tabButton, result);
 }
 window.addEventListener('load', async () => {
-    var _a, _b;
+    var _a;
     qSel("#versionNumber").innerText = browser.runtime.getManifest().version + (browser.runtime.id.includes("@temporary-addon") ? " (If you don't know what you are doing, please install this extension in a normal way.)" : "");
     await isURLExist();
     await isTabExist();
@@ -82,13 +93,13 @@ window.addEventListener('load', async () => {
     }
     qSel("#page_currently_on").innerText = urlObj.hostname;
     qSel("#id_of_tab").innerText = currentTabId.toString();
-    const setting = await browser.storage.local.get("nohistory_setting");
-    if ((setting === null || setting === void 0 ? void 0 : setting.nohistory_setting) == null) {
-        await browser.storage.local.set({
+    const setting = await storage_get("nohistory_setting");
+    if (setting == null) {
+        await storage().set({
             nohistory_setting: default_setting
         });
     }
-    if ((_b = setting === null || setting === void 0 ? void 0 : setting.nohistory_setting) === null || _b === void 0 ? void 0 : _b.darkmode) {
+    if (setting === null || setting === void 0 ? void 0 : setting.darkmode) {
         document.body.classList.add("dark_mode");
         document.body.classList.remove("light_mode");
     }
@@ -109,6 +120,12 @@ tabButton.addEventListener("click", async () => {
 });
 optionPage.addEventListener("click", async () => {
     await browser.runtime.openOptionsPage();
+    window.close();
+});
+tools.addEventListener("click", async () => {
+    await browser.tabs.create({
+        url: "/tools/index.html"
+    });
     window.close();
 });
 //# sourceMappingURL=script.js.map

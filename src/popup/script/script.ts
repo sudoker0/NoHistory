@@ -1,9 +1,21 @@
-var storage = () => browser.storage.local
-var qSel = (selector: string) => document.querySelector(selector) as HTMLElement;
-var qSelAll = (selector: string) => document.querySelectorAll(selector) as NodeListOf<HTMLElement>;
+function storage() { return browser.storage.local };
+
+async function storage_get(key: string): Promise<any | false> {
+    const result = await storage().get(key)
+    return result[key] ?? false
+}
+
+function qSel(selector: string): HTMLElement {
+    return document.querySelector(selector)
+}
+
+function qSelAll(selector: string): NodeListOf<HTMLElement> {
+    return document.querySelectorAll(selector)
+}
+
 var validURL = true;
 
-const default_setting = {
+const default_setting: Settings = {
     versionNumber: browser.runtime.getManifest().version,
     darkmode: true,
     animation: true,
@@ -13,6 +25,7 @@ const default_setting = {
 const urlButton = qSel("#thispage");
 const tabButton = qSel("#makethetab");
 const optionPage = qSel("#managenohistory");
+const tools = qSel("#tools");
 
 // {a: 1, b: 3, d: 2}; {a: 3, c: 4, d: 2} => { a: 1, c: 4, d: 2 }
 function migrateObj(oldObj: Object, newObj: Object): Object {
@@ -43,12 +56,12 @@ function areArraysEqualSets (a1: string[], a2: string[]) {
 }
 
 async function updateConf() {
-    const oldConf = (await browser.storage.local.get("nohistory_setting"))["nohistory_setting"];
+    const oldConf: Settings = await storage_get("nohistory_setting");
     const currentVersionNumber = browser.runtime.getManifest().version
     if (oldConf != undefined && (oldConf?.versionNumber != currentVersionNumber || !areArraysEqualSets(Object.keys(oldConf), Object.keys(default_setting)))) {
         var migratedObj = migrateObj(oldConf, default_setting);
         migratedObj["versionNumber"] = currentVersionNumber;
-        await browser.storage.local.set({nohistory_setting: migratedObj});
+        await storage().set({nohistory_setting: migratedObj});
     }
 }
 
@@ -56,7 +69,7 @@ function toggleButton(button: HTMLElement, on: boolean) {
     if (!validURL) return false;
     button.querySelector(".on").classList[on ? "remove" : "add"]("not");
     button.querySelector(".off").classList[on ? "add" : "remove"]("not");
-    button.style.setProperty("--current-status-color", on ? "var(--no-color)" : "var(--yes-color)");
+    button.style.setProperty("--current-status-color", on ? "var(--button-disabled)" : "var(--button-enabled)");
 }
 
 // Since there are two button in the popup page for adding and removing URL, this function will decide what button to show based on if of the current URL exist in the URl list.
@@ -98,13 +111,15 @@ window.addEventListener('load', async () => {
     // Set the current URL and the tab ID on the popup page
     qSel("#page_currently_on").innerText = urlObj.hostname;
     qSel("#id_of_tab").innerText = currentTabId.toString();
-    const setting = await browser.storage.local.get("nohistory_setting");
-    if (setting?.nohistory_setting == null) {
-        await browser.storage.local.set({
+
+    const setting: Settings = await storage_get("nohistory_setting");
+    if (setting == null) {
+        await storage().set({
             nohistory_setting: default_setting
         });
     }
-    if (setting?.nohistory_setting?.darkmode) {
+
+    if (setting?.darkmode) {
         document.body.classList.add("dark_mode");
         document.body.classList.remove("light_mode");
     } else {
@@ -127,5 +142,14 @@ tabButton.addEventListener("click", async () => {
 
 optionPage.addEventListener("click", async () => {
     await browser.runtime.openOptionsPage();
+    window.close();
+})
+
+tools.addEventListener("click", async () => {
+    await browser.tabs.create(
+        {
+            url: "/tools/index.html"
+        }
+    )
     window.close();
 })

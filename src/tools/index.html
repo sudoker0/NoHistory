@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>NoHistory Tools</title>
+        <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap" rel="stylesheet">
+        <link rel="shortcut icon" href="../icons/nohistory-logo-64.png" type="image/png">
+        <link rel="stylesheet" href="./style/style.css">
+    </head>
+    <body class="light_mode">
+        <div id="title">
+            <div id="title_image">
+                <img src="../icons/nohistory-logo-512.png" alt="NoHistory logo" width="64" height="64">
+                <img id="title_image_different" src="../icons/tools.svg" alt="Tools">
+            </div>
+            <div>
+                <h1>NoHistory Tools</h1>
+                <p>Version <span id="versionNumber"></span></p>
+            </div>
+        </div>
+        <div id="navbar">
+            <button class="tools_button checked" data-tab="clean_history">
+                <h3>Clean history</h3>
+            </button>
+        </div>
+        <div id="content">
+            <div class="tools_page opened" data-correspondingTab="clean_history">
+                <div>
+                    <div>
+                        <h3 class="group">Option</h3>
+                        <div class="option">
+                            <p>Use "Match List" from settings</p>
+                            <label class="switch">
+                                <input type="checkbox" id="use_defined_match_list" class="setting_option" data-settingOption="darkmode">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="option">
+                            <label>
+                                From:
+                                <input type="datetime-local" name="from_time" id="from_time" min="1970-01-01T00:00">
+                            </label>
+                        </div>
+                        <div class="option">
+                            <label>
+                                To:
+                                <input type="datetime-local" name="to_time" id="to_time">
+                            </label>
+                        </div>
+                    </div>
+                    <div class="not_using_defined_match_list">
+                        <h3 class="group">URLs</h3>
+                        <div id="manage_url_box">
+                            <label id="url_box">
+                                <input type="url" name="addorsearchurl" id="addorsearchurl" placeholder="Ex: https://quanmcpc.site/">
+                            </label>
+                            <!-- <button id="search_url">Search</button> -->
+                            <button class="with_text" id="add_url">Add</button>
+                        </div>
+                        <table>
+                            <colgroup>
+                                <col style="width: 90%;">
+                                <col style="width: 10%;">
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    <th>URLs</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="url_table"></tbody>
+                        </table>
+                    </div>
+                    <div class="not_using_defined_match_list">
+                        <h3 class="group">Link Title</h3>
+                        <div id="manage_pattern_box">
+                            <label>
+                                <div class="toggle_box">
+                                    <label title="string">
+                                        <input type="radio" name="pattern_mode" id="use_str" checked value="string">
+                                        <span>str</span>
+                                    </label>
+                                    <label title="regex">
+                                        <input type="radio" name="pattern_mode" id="use_regex" value="regex">
+                                        <span>(.*)</span>
+                                    </label>
+                                </div>
+                                <input type="text" name="addorsearchpattern" id="addorsearchpattern" placeholder="Ex: test12345">
+                            </label>
+                            <!-- <button id="search_pattern">Search</button> -->
+                            <button class="with_text" id="add_pattern">Add</button>
+                        </div>
+                        <table>
+                            <colgroup>
+                                <col style="width: 80%;">
+                                <col style="width: 10%;">
+                                <col style="width: 10%;">
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Type</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pattern_table"></tbody>
+                        </table>
+                    </div>
+                    <div>
+                        <h3 class="group">Output</h3>
+                        <p>Status: <span id="search_status">Not started</span></p>
+                        <p>Matched item: <span id="matched_item">0</span></p>
+                        <p>Total item in history: <span id="total_item_in_history">0</span></p>
+                        <p>From timestamp: <span id="searched_from">0</span></p>
+                        <p>To timestamp: <span id="searched_to">0</span></p>
+                        <div id="table_wrapper">
+                            <table>
+                                <colgroup>
+                                    <col style="width: 40%;">
+                                    <col style="width: 40%;">
+                                    <col style="width: 20%;">
+                                </colgroup>
+                                <thead>
+                                    <tr>
+                                        <th>URL</th>
+                                        <th>Title</th>
+                                        <th>Last visit on</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="matched_table"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <button class="with_text" id="search">Search</button>
+                    <button class="with_text" id="clean" disabled>Clean!</button>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script src="../shared/dayjs.min.js"></script>
+    <script src="../shared/customParseFormat.js"></script>
+    <script src="./script/script.js" type="module"></script>
+</html>

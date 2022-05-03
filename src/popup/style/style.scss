@@ -1,6 +1,7 @@
+@import "../../shared/_shared.scss";
+
 body {
     margin: 16px;
-    font-family: 'Source Code Pro', monospace;
     background: var(--background);
     color: var(--text);
     max-width: 480px;
@@ -64,21 +65,6 @@ main {
         //     cursor: pointer;
         // }
     }
-}
-
-.light_mode {
-    --background: #ffffff;
-    --text: #333;
-    --yes-color: #B30000;
-    --no-color: #006600;
-    --url-color: #0000FF;
-}
-.dark_mode {
-    --background: #333;
-    --text: #ffffff;
-    --yes-color: #FF3D3D;
-    --no-color: #00B800;
-    --url-color: #00FFFF;
 }
 
 .yes {

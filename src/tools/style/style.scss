@@ -1,0 +1,18 @@
+@import "../../shared/_shared.scss";
+@import "../../shared/_fullpages.scss";
+
+div.option {
+    margin: 0 0 16px 0;
+}
+
+div#table_wrapper {
+    max-height: 50vh;
+    overflow: auto;
+}
+
+tr.history_entry {
+    opacity: 0;
+    &.show {
+        opacity: 1;
+    }
+}

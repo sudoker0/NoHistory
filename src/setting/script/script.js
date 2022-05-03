@@ -1,12 +1,17 @@
 const reRegex = /\/(.*)\/[gmiyu]*/g;
-var storage = () => browser.storage.local;
-var storage_get = async (key) => {
+function storage() { return browser.storage.local; }
+;
+async function storage_get(key) {
     var _a;
     const result = await storage().get(key);
-    return (_a = result[key]) !== null && _a !== void 0 ? _a : {};
-};
-var qSel = (selector) => document.querySelector(selector);
-var qSelAll = (selector) => document.querySelectorAll(selector);
+    return (_a = result[key]) !== null && _a !== void 0 ? _a : false;
+}
+function qSel(selector) {
+    return document.querySelector(selector);
+}
+function qSelAll(selector) {
+    return document.querySelectorAll(selector);
+}
 function toggleDarkMode(isIt) {
     if (isIt) {
         document.body.classList.add("dark_mode");
@@ -73,8 +78,7 @@ function openFile() {
 }
 window.addEventListener("load", async () => {
     qSel("#versionNumber").innerText = browser.runtime.getManifest().version + (browser.runtime.id.includes("@temporary-addon") ? " (If you don't know what you are doing, please install this extension in a normal way.)" : "");
-    const setting = await storage_get("nohistory_setting");
-    const config = setting;
+    const config = await storage_get("nohistory_setting");
     function toggleStuff() {
         toggleDarkMode(config.darkmode);
         toggleTransition(config.animation);
@@ -142,6 +146,7 @@ qSel("#export_setting").onclick = async () => {
     saveAs(blob, "nohistory_config.json");
 };
 qSel("#import_setting").onclick = async () => {
+    var _a;
     const result = await openFile();
     if (result == null || typeof result != "string")
         return;
@@ -152,7 +157,7 @@ qSel("#import_setting").onclick = async () => {
         alert("Invalid JSON file.");
         return;
     }
-    data.patternList.forEach((t, i) => {
+    (_a = data.patternList) === null || _a === void 0 ? void 0 : _a.forEach((t, i) => {
         switch (t.type) {
             case "regex":
                 data.patternList[i].pattern = new RegExp(t.pattern, "gi");
