@@ -1,3 +1,4 @@
+const reRegex = /\/(.*)\/[gmiyu]*/g;
 function storage() { return browser.storage.local; }
 ;
 async function storage_get(key) {
@@ -105,9 +106,7 @@ async function reloadTable() {
         button.onclick = async () => {
             const tr = button.closest("tr");
             if (tr.getAttribute("data-pattern") != null) {
-                const result = await storage_get("nohistory_patternList");
-                let patternList = result;
-                patternList = patternList.filter(f => {
+                customPatternList = customPatternList.filter(f => {
                     switch (tr.getAttribute("data-type")) {
                         case "string":
                             return f.pattern != tr.getAttribute("data-pattern");
@@ -117,14 +116,10 @@ async function reloadTable() {
                             return false;
                     }
                 });
-                customPatternList = patternList;
             }
             else if (tr.getAttribute("data-url") != null) {
-                const result = await storage_get("nohistory_urlList");
                 const url = tr.getAttribute("data-url");
-                let urlList = result;
-                urlList = urlList.filter(e => e != url);
-                customUrlList = urlList;
+                customUrlList = customUrlList.filter(e => e != url);
             }
             button.closest("tr").remove();
         };
@@ -160,7 +155,6 @@ qSel("#add_url").onclick = async () => {
         else {
             alert("Sorry, but this is not a valid URL. Please make sure it start with \"http://\" or \"https://\".");
         }
-        console.log(customUrlList);
     }
     catch (e) {
         alert("Sorry, but this is not a valid URL. Please make sure it start with \"http://\" or \"https://\".");
@@ -204,7 +198,6 @@ qSel("#add_pattern").onclick = async () => {
             break;
     }
     await reloadTable();
-    console.log(customPatternList);
     qSel("#addorsearchpattern")["value"] = "";
 };
 search.onclick = async () => {
