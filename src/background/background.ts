@@ -5,6 +5,54 @@ async function storage_get(key: string): Promise<any | false> {
     return result[key] ?? false
 }
 
+const tabIdList: number[] = [];
+
+/**
+ * `cond_1`: Is the current tab ID in the tab ID list
+ * @param tabId The tab ID
+ * @returns If it's exist in the tab ID list
+ */
+function doesTabExist(tabId: number) {
+    const check = tabIdList.some(id => id == tabId);
+    console.log(`doesTabExist\ntabId: ${tabId}\ncheck: ${check}`)
+    return check
+}
+
+/**
+ * `cond_2`: Check if the current URL is in the URL list
+ * @param url The URL to check
+ * @returns If the URL is in the URL list
+ */
+async function doesURLExist(url: string) {
+    const urlList: string[] = await storage_get("nohistory_urlList");
+    const check = urlList.some(u => u == new URL(url).hostname);
+    console.log(`doesURLExist\nURL: ${url}\ncheck: ${check}`)
+    return check;
+}
+
+/**
+ * `cond_3`: Check if the current tab title is in the pattern list
+ * @param title The title of the tab
+ * @returns If the title is in the pattern list
+ */
+async function doesTitleExist(title: string) {
+    const pattern: Pattern[] = await storage_get("nohistory_patternList");
+    return pattern.some(pattern => {
+        switch (pattern.type) {
+            case "string":
+                var check_str = title.indexOf(`${pattern.pattern}`);
+                console.log(`doesTitleExist\ntype: string\ntitle: ${title}\ncheck: ${check_str}`)
+                return check_str != -1;
+            case "regex":
+                var check_re = title.match(pattern.pattern);
+                console.log(`doesTitleExist\ntype: regex\ntitle: ${title}\ncheck: ${check_re}`)
+                return check_re != null;
+            default:
+                return false;
+        }
+    });
+}
+
 (async() => {
     const urlList: string[] = (await storage_get("nohistory_urlList")) || [];
     const patternList: Pattern[] = (await storage_get("nohistory_patternList")) || [];
@@ -23,8 +71,6 @@ async function storage_get(key: string): Promise<any | false> {
         })
     }
 })()
-
-const tabIdList: number[] = [];
 
 function escapeString(str: string) {
     return str.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
@@ -98,84 +144,44 @@ browser.tabs.onRemoved.addListener((tabId) => {
     tabIdList.splice(tabIdList.indexOf(tabId), 1);
 })
 
-browser.history.onVisited.addListener((history_data) => {
-    return new Promise(async (resolve, _) => {
-        console.groupCollapsed("History Listener")
-        console.log(`URL: ${history_data.url}`);
-        const urlList: string[] = await storage_get("nohistory_urlList");
-        const patternList: Pattern[] = await storage_get("nohistory_patternList");
+browser.history.onTitleChanged.addListener(async (data) => {
+    const check = await doesTitleExist(data.title)
+    if (check) await browser.history.deleteUrl({url: data.url});
+    console.log(`history.onTitleChanged:\nnew_title: ${data.title}\ncheck: ${check}`);
+})
 
-        // Check if the current URL is in the URL list OR if the tab is in the tab list
-        console.log(`Title: ${history_data.title}`)
-        if (
-            urlList.some(url => url == new URL(history_data.url).hostname) ||
-            //tabIdList.some(id => id == tabId) ||
-            patternList.some(pattern => {
-                switch (pattern.type) {
-                    case "string":
-                        return history_data.title.indexOf(`${pattern.pattern}`) != -1;
-                    case "regex":
-                        return history_data.title.match(pattern.pattern) != null;
-                    default:
-                        return false;
-                }
-        })) {
-            // Delete the current URL from history
-            await browser.history.deleteUrl({url: history_data.url});
-            resolve(true);
-            console.log("Cleared");
-        }
-        console.groupEnd();
-    })
+browser.history.onVisited.addListener(async (history_data) => {
+    // Check if the current URL is in the URL list OR if the tab is in the tab list
+    //tabIdList.some(id => id == tabId)
+    const check = await doesURLExist(history_data.url) || await doesTitleExist(history_data.title);
+    if (check) {
+        // Delete the current URL from history
+        await browser.history.deleteUrl({url: history_data.url});
+        console.log(`History Listener: Cleared ${history_data.url}`);
+    }
+    console.log(`history.onVisited:\nurl: ${history_data.url}\ntitle: ${history_data.title}\ncheck: ${check}`);
 });
 
 // Handle the badge text (the number on the top-right of the extension icon)
 browser.tabs.onUpdated.addListener(async (e) => {
-    console.groupCollapsed("Tab Listener")
-    console.log(`Tab ID: ${e}`);
     const setting: Settings = await storage_get("nohistory_setting");
-    if (!setting.statusBadge) return;
-    // Does the tab exist in the tab list?
-    const cond_1 = tabIdList.some(id => id == e)
+    const check = doesTabExist(e);
+    if (!setting.statusBadge) {
+        browser.browserAction.setBadgeText({text: ""});
+        return;
+    };
 
     var tabs = await browser.tabs.query({currentWindow: true, active: true})
-    let urlList: string[] = await storage_get("nohistory_urlList");
-    // Does the current URL exist in the URL list?
-    const cond_2 = urlList.some(url => url == new URL(tabs[0].url).hostname)
 
-    var pattern: Pattern[] = await storage_get("nohistory_patternList");
-    const cond_3 = pattern.some(pattern => {
-        switch (pattern.type) {
-            case "string":
-                console.groupCollapsed("cond_3")
-                console.groupCollapsed(`type: string`)
-                console.log(`title: ${tabs[0].title}`)
-                console.log("check: " + tabs[0].title.indexOf(`${pattern.pattern}`))
-                console.groupEnd()
-                return tabs[0].title.indexOf(`${pattern.pattern}`) != -1;
-            case "regex":
-                console.groupCollapsed("cond_3")
-                console.log("type: regex")
-                console.log(`title: ${tabs[0].title}`)
-                console.log(`check: ${tabs[0].title.match(pattern.pattern)}`)
-                console.groupEnd()
-                return tabs[0].title.match(pattern.pattern) != null;
-            default:
-                return false;
-        }
-    });
-
-    if (cond_1) {
-        console.log("Tab is in the tab list");
-        console.log(`Deleted: ${tabs[0].url}`)
+    if (check) {
+        console.log(`Tab Listener\nTab is in the tab list\nDeleted: ${tabs[0].url}`)
         await browser.history.deleteUrl({url: tabs[0].url});
     }
 
-    console.log(`cond_1: ${cond_1}, cond_2: ${cond_2}, cond_3: ${cond_3}`)
     var rating: number[] = [0, 0, 0];
-    if (cond_2) rating[0] = 1;
-    if (cond_1) rating[1] = 1;
-    if (cond_3) rating[2] = 1;
+    if (await doesURLExist(tabs[0].url)) rating[0] = 1;
+    if (doesTabExist(e)) rating[1] = 1;
+    if (await doesTitleExist(tabs[0].title)) rating[2] = 1;
     var final_rating = rating.join("");
 
     const urlObj = new URL(tabs[0].url);
@@ -188,5 +194,5 @@ browser.tabs.onUpdated.addListener(async (e) => {
         browser.browserAction.setBadgeBackgroundColor({ color: [0, 0, 0, 255] });
         browser.browserAction.setBadgeTextColor({ color: [255, 255, 255, 255] });
     }
-    console.groupEnd();
+    console.log(`tabs.onUpdated\ntabId: ${e}\ncheck: ${check}\nurl:${tabs[0].url}`);
 })
