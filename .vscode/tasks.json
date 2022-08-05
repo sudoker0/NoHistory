@@ -7,27 +7,18 @@
             "label": "sass: watch",
             "type": "shell",
             "command": "npx sass --watch src --style compressed --source-map",
-            "group": "build",
-            "runOptions": {
-                "runOn": "folderOpen",
-            }
+            "group": "build"
         },
         {
             "label": "tsc: watch",
             "type": "shell",
             "command": "npx tsc --watch --project tsconfig.json",
-            "group": "build",
-            "runOptions": {
-                "runOn": "folderOpen",
-            }
+            "group": "build"
         },
         {
             "label": "RUN THIS TASK AND ONLY THIS TASK TO BUILD THE REQUIRED FILES",
             "dependsOn": ["sass: watch", "tsc: watch"],
-            "group": "build",
-            "runOptions": {
-                "runOn": "folderOpen",
-            },
+            "group": "build"
         }
     ]
 }
